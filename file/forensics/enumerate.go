@@ -1,6 +1,7 @@
 package forensics
 
 import (
+	"bytes"
 	. "cookbook/file"
 	"log"
 	"os"
@@ -94,7 +95,7 @@ func Enumerate(sort string, desc bool, paths ...string) (res Tree) {
 	return
 }
 
-func Extract(dest string, paths ...string) (res []byte) {
+func Extract(dest string, paths ...string) {
 	var ret Tree
 	for _, p := range paths {
 		n, err := NewNode(p)
@@ -105,5 +106,18 @@ func Extract(dest string, paths ...string) (res []byte) {
 	}
 	ret = dirWalker(ret)
 
-	return
+	buf := bytes.NewBuffer(nil)
+	for _, x := range ret {
+		log.Println("Event: Extracting contents from " + x.Path)
+		f, err := os.ReadFile(x.Path)
+		if err != nil {
+			continue
+		}
+		buf.Write(f)
+	}
+
+	if err := os.WriteFile(dest, buf.Bytes(), 0777); err != nil {
+		log.Fatal(err.Error())
+	}
+	log.Println("Event: Created a new file from extracted contents of the provided path(s)")
 }
