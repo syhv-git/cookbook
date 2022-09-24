@@ -14,4 +14,5 @@ func fileForensics() {
 	for _, x := range res {
 		fmt.Println(x)
 	}
+	forensics.Extract("", "")
 }

@@ -32,7 +32,7 @@ func QuickSort(t Tree, s string, b bool) {
 func sorter[T constraint](t Tree, b bool, start, end int, data func(n Node) T) {
 	if start < end {
 		p := partition(t, b, start, end, data)
-		sorter(t, b, start, p, data)
+		sorter(t, b, start, p-1, data)
 		sorter(t, b, p+1, end, data)
 	}
 }
