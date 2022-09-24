@@ -10,7 +10,7 @@ type constraint interface {
 }
 
 var (
-	dir  = func(n Node) string { return path.Base(n.Path) }
+	dir  = func(n Node) string { return path.Dir(n.Path) }
 	mod  = func(n Node) string { return n.Info.ModTime().String() }
 	name = func(n Node) string { return n.Info.Name() }
 	size = func(n Node) int64 { return n.Info.Size() }
