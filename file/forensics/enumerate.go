@@ -3,8 +3,10 @@ package forensics
 import (
 	"bytes"
 	. "cookbook/file"
+	"cookbook/file/utility"
 	"log"
 	"os"
+	"path"
 )
 
 func dirWalker(list Tree) (all Tree) {
@@ -19,7 +21,7 @@ wait:
 			if !ok {
 				break wait
 			}
-			all.Append(x)
+			all = all.Append(x)
 		case err := <-e:
 			log.Fatal(err.Error())
 		}
@@ -71,7 +73,7 @@ func handleContents(p string, c []os.DirEntry) (res Tree) {
 		if err != nil {
 			continue
 		}
-		res.Append(t)
+		res = res.Append(t)
 	}
 	return
 }
@@ -84,14 +86,14 @@ func Enumerate(sort string, desc bool, paths ...string) (res Tree) {
 	for _, p := range paths {
 		n, err := NewNode(p)
 		if err != nil {
-			log.Println(err)
+			log.Println(err.Error())
 			continue
 		}
-		res.Append(n)
+		res = res.Append(n)
 	}
 
 	res = dirWalker(res)
-	res.Sort(sort, desc)
+	utility.QuickSort(res, sort, desc)
 	return
 }
 
@@ -102,7 +104,7 @@ func Extract(dest string, paths ...string) {
 		if err != nil {
 			log.Fatal(err.Error())
 		}
-		ret.Append(n)
+		ret = ret.Append(n)
 	}
 	ret = dirWalker(ret)
 
@@ -116,7 +118,10 @@ func Extract(dest string, paths ...string) {
 		buf.Write(f)
 	}
 
-	if err := os.WriteFile(dest, buf.Bytes(), 0777); err != nil {
+	if err := os.MkdirAll(path.Dir(dest), 0777); err != nil && !os.IsExist(err) {
+		log.Fatal(err.Error())
+	}
+	if err := os.WriteFile(dest, buf.Bytes(), 0666); err != nil {
 		log.Fatal(err.Error())
 	}
 	log.Println("Event: Created a new file from extracted contents of the provided path(s)")

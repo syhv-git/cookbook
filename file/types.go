@@ -1,7 +1,6 @@
 package types
 
 import (
-	"cookbook/file/utility"
 	"os"
 )
 
@@ -22,8 +21,4 @@ type Tree []Node
 
 func (t Tree) Append(v ...Node) Tree {
 	return append(t, v...)
-}
-
-func (t Tree) Sort(s string, b bool) {
-	utility.QuickSort(t, s, b)
 }
