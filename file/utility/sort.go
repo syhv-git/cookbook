@@ -14,50 +14,44 @@ var (
 func QuickSort(t Tree, s string, b bool) {
 	switch s {
 	case "dir":
-		sorter(t, b, 0, len(t)-1, dir)
+		sorter(t, b, dir)
 	case "mod":
-		sorter(t, b, 0, len(t)-1, mod)
+		sorter(t, b, mod)
 	case "name":
-		sorter(t, b, 0, len(t)-1, name)
+		sorter(t, b, name)
 	case "size":
-		sorter(t, b, 0, len(t)-1, size)
+		sorter(t, b, size)
 	}
 }
 
-func sorter[T constraint](t Tree, b bool, start, end int, data T) {
-	if start < end {
-		p := partition(t, b, start, end, data)
-		sorter(t, b, start, p-1, data)
-		sorter(t, b, p+1, end, data)
+func sorter[T constraint](t Tree, b bool, data T) {
+	if len(t) < 2 {
+		return
 	}
+	p := partition(t, b, data)
+	sorter(t[:p], b, data)
+	sorter(t[p+1:], b, data)
 }
 
-func partition[T constraint](t Tree, b bool, start, end int, data T) int {
+func partition[T constraint](t Tree, b bool, data T) int {
+	end := len(t) - 1
 	pivot := data.handle(t[end])
-	i := start - 1
-	for j := start; j <= end; j++ {
-		n := t[j]
+	i := -1
+	for j, n := range t {
 		v := data.handle(n)
 		if b {
 			if data.compare(v, pivot) {
 				i++
-				tmp := t[i]
-				t[i] = t[j]
-				t[j] = tmp
+				t[i], t[j] = t[j], t[i]
 			}
 			continue
 		}
 		if data.compare(pivot, v) {
 			i++
-			tmp := t[i]
-			t[i] = t[j]
-			t[j] = tmp
+			t[i], t[j] = t[j], t[i]
 		}
 	}
-
 	i++
-	tmp := t[i]
-	t[i] = t[end]
-	t[end] = tmp
+	t[i], t[end] = t[end], t[i]
 	return i
 }

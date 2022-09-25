@@ -21,15 +21,15 @@ func (s sortDir) handle(n Node) any {
 }
 
 func (s sortMod) handle(n Node) any {
-	return func(n Node) string { return n.Info.ModTime().Format(time.RFC3339Nano) }(n)
+	return func(n Node) string { return n.ModTime().Format(time.RFC3339Nano) }(n)
 }
 
 func (s sortName) handle(n Node) any {
-	return func(n Node) string { return n.Info.Name() }(n)
+	return func(n Node) string { return n.Name() }(n)
 }
 
 func (s sortSize) handle(n Node) any {
-	return func(n Node) int64 { return n.Info.Size() }(n)
+	return func(n Node) int64 { return n.Size() }(n)
 }
 
 func (s sortDir) compare(x, y any) bool {

@@ -85,7 +85,7 @@ func walk(files Tree, c chan Node, e chan error) {
 	}
 
 	for _, f := range files {
-		if !f.Info.IsDir() {
+		if !f.IsDir() {
 			c <- f
 			continue
 		}
@@ -118,7 +118,7 @@ func handleContents(p string, c []os.DirEntry) (res Tree) {
 		t := Node{
 			Path: p + "/" + de.Name(),
 		}
-		t.Info, err = os.Stat(t.Path)
+		t.Nodr, err = os.Stat(t.Path)
 		if err != nil {
 			continue
 		}

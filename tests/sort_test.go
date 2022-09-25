@@ -19,7 +19,7 @@ func TestQuickSort(t *testing.T) {
 		t.Fatal(err.Error())
 	}
 
-	tree = tree.Append(types.Node{Path: f1, Info: info1}, types.Node{Path: f2, Info: info2})
+	tree = tree.Append(types.Node{Path: f1, Nodr: info1}, types.Node{Path: f2, Nodr: info2})
 
 	utility.QuickSort(tree, "dir", true)
 	if tree[0].Path != f2 {

@@ -5,9 +5,13 @@ import (
 	"path"
 )
 
+type Nodr interface {
+	os.FileInfo
+}
+
 type Node struct {
 	Path string
-	Info os.FileInfo
+	Nodr
 }
 
 func NewNode(p string) (Node, error) {
@@ -16,7 +20,7 @@ func NewNode(p string) (Node, error) {
 	if err != nil {
 		return Node{}, err
 	}
-	return Node{Path: p, Info: i}, nil
+	return Node{Path: p, Nodr: i}, nil
 }
 
 type Tree []Node
