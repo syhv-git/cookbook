@@ -41,22 +41,23 @@ func partition[T constraint](t Tree, b bool, start, end int, data T) int {
 		if b {
 			if data.compare(v, pivot) {
 				i++
-				tmp := t[j]
-				t[j] = t[i]
-				t[i] = tmp
+				tmp := t[i]
+				t[i] = t[j]
+				t[j] = tmp
 			}
 			continue
 		}
 		if data.compare(pivot, v) {
 			i++
-			tmp := t[j]
-			t[j] = t[i]
-			t[i] = tmp
+			tmp := t[i]
+			t[i] = t[j]
+			t[j] = tmp
 		}
 	}
+
 	i++
-	tmp := t[end]
-	t[end] = t[i]
-	t[i] = tmp
+	tmp := t[i]
+	t[i] = t[end]
+	t[end] = tmp
 	return i
 }

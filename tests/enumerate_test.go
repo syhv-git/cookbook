@@ -7,7 +7,7 @@ import (
 )
 
 func TestEnumeration(t *testing.T) {
-	ret := forensics.Enumerate("", false, "..")
+	ret := forensics.Enumerate("size", true, "/home/scott/Desktop")
 	if len(ret) < 1 {
 		t.Fatal("Failed to enumerate project root")
 	}

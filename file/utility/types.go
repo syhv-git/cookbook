@@ -10,8 +10,26 @@ import (
 
 type sortDir func(Node) string
 
+type sortMod func(Node) time.Time
+
+type sortName func(Node) string
+
+type sortSize func(Node) int64
+
 func (s sortDir) handle(n Node) any {
 	return func(n Node) string { return n.Path }(n)
+}
+
+func (s sortMod) handle(n Node) any {
+	return func(n Node) string { return n.Info.ModTime().Format(time.RFC3339Nano) }(n)
+}
+
+func (s sortName) handle(n Node) any {
+	return func(n Node) string { return n.Info.Name() }(n)
+}
+
+func (s sortSize) handle(n Node) any {
+	return func(n Node) int64 { return n.Info.Size() }(n)
 }
 
 func (s sortDir) compare(x, y any) bool {
@@ -22,17 +40,12 @@ func (s sortDir) compare(x, y any) bool {
 	if len(p) > len(q) {
 		return true
 	}
+
 	n := strings.Compare(i, j)
 	if n == 1 {
 		return true
 	}
 	return false
-}
-
-type sortMod func(Node) time.Time
-
-func (s sortMod) handle(n Node) any {
-	return func(n Node) string { return n.Info.ModTime().Format(time.RFC3339Nano) }(n)
 }
 
 func (s sortMod) compare(x, y any) bool {
@@ -54,15 +67,10 @@ func (s sortMod) compare(x, y any) bool {
 	return false
 }
 
-type sortName func(Node) string
-
-func (s sortName) handle(n Node) any {
-	return func(n Node) string { return n.Info.Name() }(n)
-}
-
 func (s sortName) compare(x, y any) bool {
 	i := reflect.ValueOf(x).String()
 	j := reflect.ValueOf(y).String()
+
 	n := strings.Compare(i, j)
 	if n == 1 {
 		return true
@@ -70,15 +78,10 @@ func (s sortName) compare(x, y any) bool {
 	return false
 }
 
-type sortSize func(Node) int64
-
-func (s sortSize) handle(n Node) any {
-	return func(n Node) int64 { return n.Info.Size() }(n)
-}
-
 func (s sortSize) compare(x, y any) bool {
 	i := reflect.ValueOf(x).Int()
 	j := reflect.ValueOf(y).Int()
+
 	if i > j {
 		return true
 	}
@@ -87,6 +90,7 @@ func (s sortSize) compare(x, y any) bool {
 
 type constraint interface {
 	sortDir | sortMod | sortName | sortSize
+
 	compare(x, y any) bool
 	handle(n Node) any
 }
