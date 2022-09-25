@@ -2,75 +2,14 @@ package utility
 
 import (
 	. "cookbook/file"
-	"log"
-	"path"
-	"reflect"
-	"strings"
-	"time"
 )
 
 var (
-	dir  = sortDir(func(n Node) string { return path.Dir(n.Path) })
-	mod  = sortMod(func(n Node) time.Time { return n.Info.ModTime() })
-	name = sortName(func(n Node) string { return n.Info.Name() })
-	size = sortSize(func(n Node) int64 { return n.Info.Size() })
+	dir  sortDir
+	mod  sortMod
+	name sortName
+	size sortSize
 )
-
-type constraint interface {
-	sortDir | sortMod | sortName | sortSize
-	compare(x, y any) bool
-}
-
-type sortDir func(f func(n Node) string) string
-type sortMod func(f func(n Node) time.Time) time.Time
-type sortName func(f func(n Node) string) string
-type sortSize func(f func(n Node) int64) int64
-
-func (d sortDir) compare(x, y any) bool {
-	i := reflect.ValueOf(x).String()
-	j := reflect.ValueOf(y).String()
-	n := strings.Compare(i, j)
-	if n == 1 {
-		return true
-	}
-	return false
-}
-
-func (d sortMod) compare(x, y any) bool {
-	i := reflect.ValueOf(x).String()
-	j := reflect.ValueOf(y).String()
-	a, err := time.Parse(time.Layout, i)
-	if err != nil {
-		log.Fatal(err.Error())
-	}
-	b, err := time.Parse(time.Layout, j)
-	if err != nil {
-		log.Fatal(err.Error())
-	}
-	if a.After(b) {
-		return true
-	}
-	return false
-}
-
-func (d sortName) compare(x, y any) bool {
-	i := reflect.ValueOf(x).String()
-	j := reflect.ValueOf(y).String()
-	n := strings.Compare(i, j)
-	if n == 1 {
-		return true
-	}
-	return false
-}
-
-func (d sortSize) compare(x, y any) bool {
-	i := reflect.ValueOf(x).Int()
-	j := reflect.ValueOf(y).Int()
-	if i > j {
-		return true
-	}
-	return false
-}
 
 func QuickSort(t Tree, s string, b bool) {
 	switch s {
@@ -94,11 +33,11 @@ func sorter[T constraint](t Tree, b bool, start, end int, data T) {
 }
 
 func partition[T constraint](t Tree, b bool, start, end int, data T) int {
-	pivot := data(t[end])
+	pivot := data.handle(t[end])
 	i := start - 1
 	for j := start; j <= end; j++ {
 		n := t[j]
-		v := data(n)
+		v := data.handle(n)
 		if b {
 			if data.compare(v, pivot) {
 				i++

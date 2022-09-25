@@ -10,9 +10,12 @@ func main() {
 }
 
 func fileForensics() {
-	res := forensics.Enumerate("size", true, "/home/scott/Desktop")
-	for _, x := range res {
-		fmt.Println(x)
+	// enumerate paths and return slice of all accessible files sorted based on params
+	res := forensics.Enumerate("mod", true, "/home/scott")
+	for x := 0; x < 75; x++ {
+		fmt.Println(res[x])
 	}
-	forensics.Extract("", "")
+
+	// extract contents at paths and write it to dest
+	forensics.Extract("output.txt", "")
 }

@@ -9,7 +9,7 @@ import (
 
 func TestQuickSort(t *testing.T) {
 	var tree types.Tree
-	f1, f2 := "../go.mod", "../file/forensics/enumerate.go"
+	f1, f2 := "../.gitattributes", "../file/forensics/enumerate.go"
 	info1, err := os.Stat(f1)
 	if err != nil {
 		t.Fatal(err.Error())
@@ -18,7 +18,24 @@ func TestQuickSort(t *testing.T) {
 	if err != nil {
 		t.Fatal(err.Error())
 	}
+
 	tree = tree.Append(types.Node{Path: f1, Info: info1}, types.Node{Path: f2, Info: info2})
+
+	utility.QuickSort(tree, "dir", true)
+	if tree[0].Path != f2 {
+		t.Error("Error when sorting a tree")
+	}
+
+	utility.QuickSort(tree, "mod", true)
+	if tree[0].Path != f2 {
+		t.Error("Error when sorting a tree")
+	}
+
+	utility.QuickSort(tree, "name", true)
+	if tree[0].Path != f2 {
+		t.Error("Error when sorting a tree")
+	}
+
 	utility.QuickSort(tree, "size", true)
 	if tree[0].Path != f2 {
 		t.Error("Error when sorting a tree")

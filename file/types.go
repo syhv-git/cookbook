@@ -2,6 +2,7 @@ package types
 
 import (
 	"os"
+	"path"
 )
 
 type Node struct {
@@ -9,12 +10,13 @@ type Node struct {
 	Info os.FileInfo
 }
 
-func NewNode(path string) (Node, error) {
-	i, err := os.Stat(path)
+func NewNode(p string) (Node, error) {
+	p = path.Clean(p)
+	i, err := os.Stat(p)
 	if err != nil {
 		return Node{}, err
 	}
-	return Node{Path: path, Info: i}, nil
+	return Node{Path: p, Info: i}, nil
 }
 
 type Tree []Node
