@@ -28,7 +28,7 @@ func Enumerate(sort string, desc bool, paths ...string) (res Tree) {
 	return
 }
 
-func Extract(dest string, paths ...string) {
+func ExtractCopy(dest string, paths ...string) {
 	var ret Tree
 	for _, p := range paths {
 		n, err := NewNode(p)

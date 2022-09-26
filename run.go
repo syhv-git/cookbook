@@ -17,5 +17,5 @@ func fileForensics() {
 	}
 
 	// extract contents at paths and write it to dest
-	forensics.Extract("output.txt", "")
+	forensics.ExtractCopy("output.txt", "")
 }
