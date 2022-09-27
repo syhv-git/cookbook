@@ -22,6 +22,7 @@ func Enumerate(v bool, sortBy string, desc bool, paths ...string) Tree {
 	return res
 }
 
+// Extractor extracts the files at src and concatenates the contents into the writer.
 func Extractor(v bool, dst io.Writer, src ...string) {
 	res := NewTree(src...)
 	res = dirWalker(v, res)
@@ -30,6 +31,7 @@ func Extractor(v bool, dst io.Writer, src ...string) {
 	}
 }
 
+// ExtractCopy extracts the files at src and creates a new file dest with the concatenated contents.
 func ExtractCopy(v bool, dst string, src ...string) {
 	res := NewTree(src...)
 	res = dirWalker(v, res)
@@ -46,7 +48,7 @@ func ExtractCopy(v bool, dst string, src ...string) {
 	if err := os.WriteFile(dst, buf.Bytes(), 0666); err != nil {
 		log.Fatal(err.Error())
 	}
-	cmd.Log(v, "* Successfully copied contents to %s\n", dst)
+	cmd.Log(v, "* Successfully copied contents from %v\n", res)
 }
 
 func extractor(v bool, w io.Writer, t Tree) error {

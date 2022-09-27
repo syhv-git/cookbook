@@ -6,6 +6,7 @@ import (
 	"bytes"
 	"compress/gzip"
 	cmd "cookbook"
+	types "cookbook/file"
 	"cookbook/file/forensics"
 	"io"
 	"log"
@@ -46,17 +47,17 @@ func CompressNew(v bool, dst string, src ...string) {
 
 	switch filepath.Ext(path.Base(dst)) {
 	case ".tar":
-		compressTar(v, tmp, f, src)
+		compressTar(v, tmp, n[0]+"/", f, src)
 	case ".gz":
-		compressGZ(v, tmp, f, src)
+		compressGZ(v, tmp, n[0]+"/", f, src)
 	case ".zip":
-		compressZip(v, tmp, f, src)
+		compressZip(v, tmp, n[0]+"/", f, src)
 	default:
 		cmd.Log(v, "* Unknown compression method: %v\n", n[1:])
 	}
 }
 
-func compressTar(v bool, tmp string, w io.Writer, src []string) {
+func compressTar(v bool, tmp, dst string, w io.Writer, src []string) {
 	cmd.Log(v, "\n*** Starting Tar compression\n")
 	defer cmd.Log(v, "Ending Tar compression ***\n")
 
@@ -65,61 +66,67 @@ func compressTar(v bool, tmp string, w io.Writer, src []string) {
 	}
 	a := forensics.Enumerate(v, "", false, tmp)
 
-	t := tar.NewWriter(w)
-	defer t.Close()
-	for _, x := range a {
-		h := &tar.Header{Name: x.Name(), Mode: 0777, Size: x.Size()}
-		if err := t.WriteHeader(h); err != nil {
+	tw := tar.NewWriter(w)
+	defer tw.Close()
+	handleTar(dst, a, tw)
+}
+
+func handleTar(dst string, t types.Tree, tw *tar.Writer) {
+	for _, x := range t {
+		p := strings.Split(x.Path, "/")
+		h := &tar.Header{
+			Name:    dst + strings.Join(p[1:], "/"),
+			Mode:    int64(x.Mode()),
+			ModTime: x.ModTime(),
+			Size:    x.Size(),
+		}
+		if err := tw.WriteHeader(h); err != nil {
 			log.Fatal(err.Error())
 		}
-		buf := bytes.NewBuffer(nil)
-		forensics.Extractor(v, buf, x.Path)
-		if _, err := t.Write(buf.Bytes()); err != nil {
-			log.Fatal()
+		b, _ := os.ReadFile(x.Path)
+		if _, err := tw.Write(b); err != nil {
+			log.Fatal(err.Error())
 		}
 	}
 }
 
-func compressGZ(v bool, tmp string, w io.Writer, src []string) {
+func compressGZ(v bool, tmp, dst string, w io.Writer, src []string) {
 	cmd.Log(v, "\n*** Starting GZip compression\n")
 	defer cmd.Log(v, "Ending GZip compression ***\n")
 
 	for _, x := range src {
 		n := path.Clean(strings.Join(strings.Split(x, ".."), ""))
-		forensics.ExtractCopy(v, path.Join(tmp, n))
+		forensics.ExtractCopy(v, path.Join(tmp, n), x)
 	}
 	a := forensics.Enumerate(v, "", false, tmp)
 
 	g := gzip.NewWriter(w)
+	tw := tar.NewWriter(g)
 	defer g.Close()
-	for _, x := range a {
-		buf := bytes.NewBuffer(nil)
-		forensics.Extractor(v, buf, x.Path)
-		if _, err := g.Write(buf.Bytes()); err != nil {
-			log.Fatal()
-		}
-	}
+	defer tw.Close()
+	handleTar(dst, a, tw)
 }
 
-func compressZip(v bool, tmp string, w io.Writer, src []string) {
+func compressZip(v bool, tmp, dst string, w io.Writer, src []string) {
 	cmd.Log(v, "\n*** Starting Zip compression\n")
 	defer cmd.Log(v, "Ending Zip compression ***\n")
 
 	for _, x := range src {
 		n := path.Clean(strings.Join(strings.Split(x, ".."), ""))
-		forensics.ExtractCopy(v, path.Join(tmp, n))
+		forensics.ExtractCopy(v, path.Join(tmp, n), x)
 	}
 	a := forensics.Enumerate(v, "", false, tmp)
 
 	z := zip.NewWriter(w)
 	defer z.Close()
-	for _, p := range a.GetPaths(0) {
-		f, err := z.Create(p[len(tmp)-1:])
+	for _, p := range a {
+		f, err := z.Create(dst + p.Path[len(tmp)-1:])
 		if err != nil {
 			log.Fatal(err.Error())
 		}
 		buf := bytes.NewBuffer(nil)
-		forensics.Extractor(v, buf, p)
+		b, _ := os.ReadFile(p.Path)
+		buf.Write(b)
 		if _, err = f.Write(buf.Bytes()); err != nil {
 			log.Fatal()
 		}
