@@ -68,10 +68,10 @@ func compressTar(v bool, tmp, dst string, w io.Writer, src []string) {
 
 	tw := tar.NewWriter(w)
 	defer tw.Close()
-	handleTar(dst, a, tw)
+	archive(dst, a, tw)
 }
 
-func handleTar(dst string, t types.Tree, tw *tar.Writer) {
+func archive(dst string, t types.Tree, tw *tar.Writer) {
 	for _, x := range t {
 		p := strings.Split(x.Path, "/")
 		h := &tar.Header{
@@ -104,7 +104,7 @@ func compressGZ(v bool, tmp, dst string, w io.Writer, src []string) {
 	tw := tar.NewWriter(g)
 	defer g.Close()
 	defer tw.Close()
-	handleTar(dst, a, tw)
+	archive(dst, a, tw)
 }
 
 func compressZip(v bool, tmp, dst string, w io.Writer, src []string) {
@@ -158,10 +158,10 @@ func Decompress(v bool, dst, src string) {
 
 func decompressTar(v bool, r io.Reader, dst string) {
 	tr := tar.NewReader(r)
-	unhandleTar(v, dst, tr)
+	unarchive(v, dst, tr)
 }
 
-func unhandleTar(v bool, dst string, tr *tar.Reader) {
+func unarchive(v bool, dst string, tr *tar.Reader) {
 	var (
 		h *tar.Header
 		e error
@@ -206,7 +206,7 @@ func decompressGZ(v bool, r io.Reader, dst string) {
 		log.Fatal(err.Error())
 	}
 	tr := tar.NewReader(gr)
-	unhandleTar(v, dst, tr)
+	unarchive(v, dst, tr)
 }
 
 func decompressZip(v bool, dst, src string) {
