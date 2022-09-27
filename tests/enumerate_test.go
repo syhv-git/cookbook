@@ -1,6 +1,7 @@
 package tests
 
 import (
+	"bytes"
 	"cookbook/file/forensics"
 	"log"
 	"os"
@@ -8,7 +9,7 @@ import (
 )
 
 func TestEnumeration(t *testing.T) {
-	ret := forensics.Enumerate("size", true, "/home/scott/Desktop")
+	ret := forensics.Enumerate(true, "size", true, "/home/scott/Desktop")
 	if len(ret) < 1 {
 		t.Fatal("Failed to enumerate project root")
 	}
@@ -17,8 +18,18 @@ func TestEnumeration(t *testing.T) {
 	}
 }
 
-func TestExtraction(t *testing.T) {
-	forensics.ExtractCopy("tmp/extract.txt", "types_test.go")
+func TestExtractor(t *testing.T) {
+	buf := bytes.NewBuffer(nil)
+	forensics.Extractor(true, buf, "types_test.go")
+
+	a, _ := os.ReadFile("types_test.go")
+	if string(buf.Bytes()) != string(a) {
+		t.Error("Error when extracting file contents")
+	}
+}
+
+func TestExtractCopy(t *testing.T) {
+	forensics.ExtractCopy(true, "tmp/extract.txt", "types_test.go")
 	defer os.RemoveAll("tmp")
 
 	f, err := os.ReadFile("tmp/extract.txt")

@@ -2,8 +2,10 @@ package forensics
 
 import (
 	"bytes"
+	cmd "cookbook"
 	. "cookbook/file"
-	"cookbook/file/utility"
+	"cookbook/file/utility/sort"
+	"io"
 	"log"
 	"os"
 	"path"
@@ -13,55 +15,68 @@ import (
 // sort must be one of ("dir" | "mod" | "name" | "size")
 // desc defines whether the contents are sorted in descending order or ascending order
 // paths is a variadic list of paths to enumerate
-func Enumerate(sort string, desc bool, paths ...string) (res Tree) {
-	for _, p := range paths {
-		n, err := NewNode(p)
-		if err != nil {
-			log.Println(err.Error())
-			continue
-		}
-		res = res.Append(n)
-	}
-
-	res = dirWalker(res)
-	utility.QuickSort(res, sort, desc)
-	return
+func Enumerate(v bool, sortBy string, desc bool, paths ...string) Tree {
+	res := NewTree(paths...)
+	res = dirWalker(v, res)
+	sort.QuickSort(v, res, sortBy, desc)
+	return res
 }
 
-func ExtractCopy(dest string, paths ...string) {
-	var ret Tree
-	for _, p := range paths {
-		n, err := NewNode(p)
-		if err != nil {
-			log.Fatal(err.Error())
-		}
-		ret = ret.Append(n)
+func Extractor(v bool, dst io.Writer, src ...string) {
+	res := NewTree(src...)
+	res = dirWalker(v, res)
+	if err := extractor(v, dst, res); err != nil {
+		log.Fatal(err.Error())
 	}
-	ret = dirWalker(ret)
+}
+
+func ExtractCopy(v bool, dst string, src ...string) {
+	res := NewTree(src...)
+	res = dirWalker(v, res)
 
 	buf := bytes.NewBuffer(nil)
-	for _, x := range ret {
-		log.Println("Event: Extracting contents from " + x.Path)
+	if err := extractor(v, buf, res); err != nil {
+		log.Fatal(err.Error())
+	}
+
+	cmd.Log(v, "- Creating output file: %s\n", dst)
+	if err := os.MkdirAll(path.Dir(dst), 0777); err != nil && !os.IsExist(err) {
+		log.Fatal(err.Error())
+	}
+	if err := os.WriteFile(dst, buf.Bytes(), 0666); err != nil {
+		log.Fatal(err.Error())
+	}
+	cmd.Log(v, "* Successfully copied contents to %s\n", dst)
+}
+
+func extractor(v bool, w io.Writer, t Tree) error {
+	cmd.Log(v, "\n*** Starting extraction\n")
+	defer cmd.Log(v, "Ending extraction ***\n")
+
+	for _, x := range t {
+		cmd.Log(v, "- Extracting contents: %s\n", x.Path)
 		f, err := os.ReadFile(x.Path)
 		if err != nil {
 			continue
 		}
-		buf.Write(f)
+		if err = os.MkdirAll(path.Dir(x.Path), 0777); err != nil && !os.IsExist(err) {
+			log.Fatal(err.Error())
+		}
+		if _, err = w.Write(f); err != nil {
+			return err
+		}
 	}
-
-	if err := os.MkdirAll(path.Dir(dest), 0777); err != nil && !os.IsExist(err) {
-		log.Fatal(err.Error())
-	}
-	if err := os.WriteFile(dest, buf.Bytes(), 0666); err != nil {
-		log.Fatal(err.Error())
-	}
-	log.Println("Event: Created a new file from extracted contents of the provided path(s)")
+	return nil
 }
 
-func dirWalker(list Tree) (all Tree) {
+func dirWalker(v bool, list Tree) Tree {
+	var all Tree
+	cmd.Log(v, "\n*** Starting enumeration\n")
+	defer cmd.Log(v, "Ending enumeration ***\n")
+
 	c := make(chan Node)
 	e := make(chan error)
-	go walk(list, c, e)
+	go walk(v, list, c, e)
 
 wait:
 	for {
@@ -75,10 +90,10 @@ wait:
 			log.Fatal(err.Error())
 		}
 	}
-	return
+	return all
 }
 
-func walk(files Tree, c chan Node, e chan error) {
+func walk(v bool, files Tree, c chan Node, e chan error) {
 	defer close(c)
 	if len(files) < 1 {
 		return
@@ -94,7 +109,7 @@ func walk(files Tree, c chan Node, e chan error) {
 
 		c2 := make(chan Node)
 		e2 := make(chan error)
-		go walk(sub, c2, e2)
+		go walk(v, sub, c2, e2)
 
 	wait2:
 		for {
@@ -113,12 +128,8 @@ func walk(files Tree, c chan Node, e chan error) {
 }
 
 func handleContents(p string, c []os.DirEntry) (res Tree) {
-	var err error
 	for _, de := range c {
-		t := Node{
-			Path: p + "/" + de.Name(),
-		}
-		t.Nodr, err = os.Stat(t.Path)
+		t, err := NewNode(p + "/" + de.Name())
 		if err != nil {
 			continue
 		}

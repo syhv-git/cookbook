@@ -17,11 +17,19 @@ func TestNewNode(t *testing.T) {
 	}
 }
 
-func TestTreeAppend(t *testing.T) {
+func TestNewTree(t *testing.T) {
+
+}
+
+func TestAppend(t *testing.T) {
 	var tree types.Tree
 	n1, _ := types.NewNode("..")
 	tree = tree.Append(n1)
 	if len(tree) != 1 {
 		t.Error("Error when appending a node to a tree")
 	}
+}
+
+func TestGetPaths(t *testing.T) {
+
 }
