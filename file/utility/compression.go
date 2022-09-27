@@ -67,10 +67,16 @@ func compressTar(v bool, tmp string, w io.Writer, src []string) {
 
 	t := tar.NewWriter(w)
 	defer t.Close()
-	for _, x := range a.GetPaths(0) {
+	for _, x := range a {
+		h := &tar.Header{Name: x.Name(), Mode: 0777, Size: x.Size()}
+		if err := t.WriteHeader(h); err != nil {
+			log.Fatal(err.Error())
+		}
 		buf := bytes.NewBuffer(nil)
-		forensics.Extractor(v, buf, x)
-		t.Write(buf.Bytes())
+		forensics.Extractor(v, buf, x.Path)
+		if _, err := t.Write(buf.Bytes()); err != nil {
+			log.Fatal()
+		}
 	}
 }
 
@@ -86,10 +92,12 @@ func compressGZ(v bool, tmp string, w io.Writer, src []string) {
 
 	g := gzip.NewWriter(w)
 	defer g.Close()
-	for _, x := range a.GetPaths(0) {
+	for _, x := range a {
 		buf := bytes.NewBuffer(nil)
-		forensics.Extractor(v, buf, x)
-		g.Write(buf.Bytes())
+		forensics.Extractor(v, buf, x.Path)
+		if _, err := g.Write(buf.Bytes()); err != nil {
+			log.Fatal()
+		}
 	}
 }
 
@@ -106,13 +114,15 @@ func compressZip(v bool, tmp string, w io.Writer, src []string) {
 	z := zip.NewWriter(w)
 	defer z.Close()
 	for _, p := range a.GetPaths(0) {
-		r, err := z.Create(p[len(tmp)-1:])
+		f, err := z.Create(p[len(tmp)-1:])
 		if err != nil {
 			log.Fatal(err.Error())
 		}
 		buf := bytes.NewBuffer(nil)
 		forensics.Extractor(v, buf, p)
-		r.Write(buf.Bytes())
+		if _, err = f.Write(buf.Bytes()); err != nil {
+			log.Fatal()
+		}
 	}
 }
 
