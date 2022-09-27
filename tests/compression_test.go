@@ -7,12 +7,14 @@ import (
 )
 
 func TestNewCompression(t *testing.T) {
-	utility.CompressNew(true, "test.tar.gz", "../.gitignore", "../file/types.go", "types_test.go")
-	f, err := os.Stat("test.tar.gz")
+	dst := "test.tar.gz"
+	utility.CompressNew(true, dst, "../.gitignore", "../file/types.go", "types_test.go")
+	f, err := os.Stat(dst)
 	if err != nil {
 		t.Fatal(err.Error())
 	}
-	if f.Name() != "test.tar.gz" {
+	if f.Name() != dst {
 		t.Error("Error when creating compressed file")
 	}
+	os.Remove(dst)
 }

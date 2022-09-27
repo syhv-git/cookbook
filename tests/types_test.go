@@ -18,7 +18,10 @@ func TestNewNode(t *testing.T) {
 }
 
 func TestNewTree(t *testing.T) {
-
+	tree := types.NewTree(".")
+	if len(tree) < 1 {
+		t.Error("Error when create a new tree")
+	}
 }
 
 func TestAppend(t *testing.T) {
@@ -31,5 +34,9 @@ func TestAppend(t *testing.T) {
 }
 
 func TestGetPaths(t *testing.T) {
-
+	tree := types.NewTree(".")
+	s := tree.GetPaths(0)
+	if len(s) < 1 {
+		t.Error("Error when getting paths")
+	}
 }
