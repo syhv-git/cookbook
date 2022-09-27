@@ -16,5 +16,16 @@ func TestNewCompression(t *testing.T) {
 	if f.Name() != dst {
 		t.Error("Error when creating compressed file")
 	}
+
+	utility.Decompress(true, "", dst)
+	d, err := os.ReadDir("test")
+	if err != nil {
+		t.Fatal(err.Error())
+	}
+	if len(d) < 1 {
+		t.Error("Error when decompressing file")
+	}
+
 	os.Remove(dst)
+	os.RemoveAll("test")
 }

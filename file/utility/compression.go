@@ -136,8 +136,10 @@ func compressZip(v bool, tmp, dst string, w io.Writer, src []string) {
 // Decompress decompresses an archive or compressed file and retrieves the contents.
 // dst must be a directory. If dst is a nil string then the path from the source file is used.
 func Decompress(v bool, dst, src string) {
-	if err := os.MkdirAll(dst, 0777); err != nil && !os.IsExist(err) {
-		log.Fatal(err.Error())
+	if dst != "" {
+		if err := os.MkdirAll(dst, 0777); err != nil && !os.IsExist(err) {
+			log.Fatal(err.Error())
+		}
 	}
 	f, err := os.Open(src)
 	if err != nil {
@@ -157,22 +159,23 @@ func Decompress(v bool, dst, src string) {
 }
 
 func decompressTar(v bool, r io.Reader, dst string) {
+	cmd.Log(v, "\n*** Starting Tar decompression\n")
+	defer cmd.Log(v, "Ending Tar decompression ***\n")
 	tr := tar.NewReader(r)
 	unarchive(v, dst, tr)
 }
 
 func unarchive(v bool, dst string, tr *tar.Reader) {
-	var (
-		h *tar.Header
-		e error
-	)
-
-	for h, e = tr.Next(); e != nil; h, e = tr.Next() {
+	for {
 		var (
 			f   *os.File
 			err error
 		)
 
+		h, e := tr.Next()
+		if e == io.EOF {
+			break
+		}
 		cmd.Log(v, "Extracting: %s\n", h.Name)
 		if h.Typeflag == tar.TypeDir {
 			if err = os.MkdirAll(path.Join(dst, h.Name), 0777); err != nil && !os.IsExist(err) {
@@ -194,12 +197,11 @@ func unarchive(v bool, dst string, tr *tar.Reader) {
 		}
 		f.Close()
 	}
-	if e != io.EOF {
-		log.Fatal(e.Error())
-	}
 }
 
 func decompressGZ(v bool, r io.Reader, dst string) {
+	cmd.Log(v, "\n*** Starting GZip decompression\n")
+	defer cmd.Log(v, "Ending GZip decompression ***\n")
 	gr, err := gzip.NewReader(r)
 	defer gr.Close()
 	if err != nil {
@@ -210,6 +212,8 @@ func decompressGZ(v bool, r io.Reader, dst string) {
 }
 
 func decompressZip(v bool, dst, src string) {
+	cmd.Log(v, "\n*** Starting Zip decompression\n")
+	defer cmd.Log(v, "Ending Zip decompression ***\n")
 	zr, err := zip.OpenReader(src)
 	if err != nil {
 		log.Fatal(err.Error())
