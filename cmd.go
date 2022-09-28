@@ -9,3 +9,7 @@ func Log(v bool, s string, param ...any) {
 		log.Printf(s, param...)
 	}
 }
+
+func Fatal(s string, param ...any) {
+	log.Printf(s, param...)
+}

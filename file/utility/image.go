@@ -5,13 +5,12 @@ import (
 	"image"
 	"image/jpeg"
 	"io"
-	"log"
 	"math/rand"
 )
 
 func GenerateRandomImage(v bool, x, y int, dst io.Writer) {
 	if v {
-		cmd.Log(v, "- Generating random noise as image\n")
+		cmd.Log(v, "- Generating random noise as image")
 	}
 
 	i := image.NewRGBA(image.Rect(0, 0, x, y))
@@ -23,9 +22,9 @@ func GenerateRandomImage(v bool, x, y int, dst io.Writer) {
 		i.Pix[3+o] = 255
 	}
 
-	cmd.Log(v, "- Encoding the generated RGB to JPEG\n")
+	cmd.Log(v, "- Encoding the generated RGB to JPEG")
 	err := jpeg.Encode(dst, i, nil)
 	if err != nil {
-		log.Fatal(err.Error())
+		cmd.Fatal("## " + err.Error())
 	}
 }

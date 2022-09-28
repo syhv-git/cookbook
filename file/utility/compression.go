@@ -9,7 +9,6 @@ import (
 	types "cookbook/file"
 	"cookbook/file/forensics"
 	"io"
-	"log"
 	"os"
 	"path"
 	"path/filepath"
@@ -18,30 +17,30 @@ import (
 
 // CompressNew compresses the files at src into dst based on method.
 func CompressNew(v bool, dst string, src ...string) {
-	cmd.Log(v, "\n*** Starting compression\n")
-	defer cmd.Log(v, "Ending compression ***\n")
+	cmd.Log(v, "*** Starting compression")
+	defer cmd.Log(v, "*** Ending compression")
 	if path.IsAbs(dst) {
-		log.Fatalf("Destination %s must be relative", dst)
+		cmd.Fatal("## Destination %s must be relative", dst)
 	}
 	n := strings.Split(path.Base(dst), ".")
 	if len(n) < 2 {
-		log.Fatalf("Destination %s cannot be a directory\n", dst)
+		cmd.Fatal("## Destination %s cannot be a directory\n", dst)
 	}
 
 	if err := os.MkdirAll(path.Dir(path.Clean(dst)), 0777); err != nil && !os.IsExist(err) {
-		log.Fatal(err.Error())
+		cmd.Fatal("## " + err.Error())
 	}
-	cmd.Log(v, "- Creating temp dir\n")
+	cmd.Log(v, "- Creating temp dir")
 	tmp, err := os.MkdirTemp(path.Dir(dst), n[0])
 	if err != nil {
-		log.Fatal(err.Error())
+		cmd.Fatal("## " + err.Error())
 	}
 	defer os.RemoveAll(tmp)
 
-	cmd.Log(v, "- Creating the destination file at: %s\n", dst)
+	cmd.Log(v, "- Creating the destination file at: %s", dst)
 	f, err := os.Create(dst)
 	if err != nil {
-		log.Fatal(err.Error())
+		cmd.Fatal("## " + err.Error())
 	}
 	defer f.Close()
 
@@ -53,13 +52,13 @@ func CompressNew(v bool, dst string, src ...string) {
 	case ".zip":
 		compressZip(v, tmp, n[0]+"/", f, src)
 	default:
-		cmd.Log(v, "* Unknown compression method: %v\n", strings.Join(n[1:], "."))
+		cmd.Log(v, "* Unknown compression method: %v", strings.Join(n[1:], "."))
 	}
 }
 
 func compressTar(v bool, tmp, dst string, w io.Writer, src []string) {
-	cmd.Log(v, "\n*** Starting Tar compression\n")
-	defer cmd.Log(v, "Ending Tar compression ***\n")
+	cmd.Log(v, "*** Starting Tar compression")
+	defer cmd.Log(v, "*** Ending Tar compression")
 
 	for _, x := range src {
 		forensics.ExtractCopy(v, path.Join(tmp, path.Base(x)), x)
@@ -81,18 +80,18 @@ func archive(dst string, t types.Tree, tw *tar.Writer) {
 			Size:    x.Size(),
 		}
 		if err := tw.WriteHeader(h); err != nil {
-			log.Fatal(err.Error())
+			cmd.Fatal("## " + err.Error())
 		}
 		b, _ := os.ReadFile(x.Path)
 		if _, err := tw.Write(b); err != nil {
-			log.Fatal(err.Error())
+			cmd.Fatal("## " + err.Error())
 		}
 	}
 }
 
 func compressGZ(v bool, tmp, dst string, w io.Writer, src []string) {
-	cmd.Log(v, "\n*** Starting GZip compression\n")
-	defer cmd.Log(v, "Ending GZip compression ***\n")
+	cmd.Log(v, "*** Starting GZip compression")
+	defer cmd.Log(v, "*** Ending GZip compression")
 
 	for _, x := range src {
 		n := path.Clean(strings.Join(strings.Split(x, ".."), ""))
@@ -108,8 +107,8 @@ func compressGZ(v bool, tmp, dst string, w io.Writer, src []string) {
 }
 
 func compressZip(v bool, tmp, dst string, w io.Writer, src []string) {
-	cmd.Log(v, "\n*** Starting Zip compression\n")
-	defer cmd.Log(v, "Ending Zip compression ***\n")
+	cmd.Log(v, "*** Starting Zip compression")
+	defer cmd.Log(v, "*** Ending Zip compression")
 
 	for _, x := range src {
 		n := path.Clean(strings.Join(strings.Split(x, ".."), ""))
@@ -122,13 +121,13 @@ func compressZip(v bool, tmp, dst string, w io.Writer, src []string) {
 	for _, p := range a {
 		f, err := z.Create(dst + p.Path[len(tmp)-1:])
 		if err != nil {
-			log.Fatal(err.Error())
+			cmd.Fatal("## " + err.Error())
 		}
 		buf := bytes.NewBuffer(nil)
 		b, _ := os.ReadFile(p.Path)
 		buf.Write(b)
 		if _, err = f.Write(buf.Bytes()); err != nil {
-			log.Fatal()
+			cmd.Fatal("## " + err.Error())
 		}
 	}
 }
@@ -138,12 +137,12 @@ func compressZip(v bool, tmp, dst string, w io.Writer, src []string) {
 func Decompress(v bool, dst, src string) {
 	if dst != "" {
 		if err := os.MkdirAll(dst, 0777); err != nil && !os.IsExist(err) {
-			log.Fatal(err.Error())
+			cmd.Fatal("## " + err.Error())
 		}
 	}
 	f, err := os.Open(src)
 	if err != nil {
-		log.Fatal(err.Error())
+		cmd.Fatal("## " + err.Error())
 	}
 
 	switch filepath.Ext(path.Base(src)) {
@@ -154,13 +153,13 @@ func Decompress(v bool, dst, src string) {
 	case ".zip":
 		decompressZip(v, dst, src)
 	default:
-		cmd.Log(v, "* Unknown compression method: %v\n", strings.Join(strings.Split(path.Base(src), ".")[1:], "."))
+		cmd.Log(v, "* Unknown compression method: %v", strings.Join(strings.Split(path.Base(src), ".")[1:], "."))
 	}
 }
 
 func decompressTar(v bool, r io.Reader, dst string) {
-	cmd.Log(v, "\n*** Starting Tar decompression\n")
-	defer cmd.Log(v, "Ending Tar decompression ***\n")
+	cmd.Log(v, "*** Starting Tar decompression")
+	defer cmd.Log(v, "*** Ending Tar decompression")
 	tr := tar.NewReader(r)
 	unarchive(v, dst, tr)
 }
@@ -176,74 +175,74 @@ func unarchive(v bool, dst string, tr *tar.Reader) {
 		if e == io.EOF {
 			break
 		}
-		cmd.Log(v, "Extracting: %s\n", h.Name)
+		cmd.Log(v, "- Extracting: %s", h.Name)
 		if h.Typeflag == tar.TypeDir {
 			if err = os.MkdirAll(path.Join(dst, h.Name), 0777); err != nil && !os.IsExist(err) {
-				log.Fatal(err.Error())
+				cmd.Fatal("## " + err.Error())
 			}
 			continue
 		}
 
 		if err = os.MkdirAll(path.Join(dst, path.Dir(h.Name)), 0777); err != nil && !os.IsExist(err) {
-			log.Fatal(err.Error())
+			cmd.Fatal("## " + err.Error())
 		}
 		f, err = os.Create(path.Join(dst, h.Name))
 		if err != nil {
-			log.Fatal(err.Error())
+			cmd.Fatal("## " + err.Error())
 		}
 		if _, err = io.Copy(f, tr); err != nil {
 			f.Close()
-			log.Fatal(err.Error())
+			cmd.Fatal("## " + err.Error())
 		}
 		f.Close()
 	}
 }
 
 func decompressGZ(v bool, r io.Reader, dst string) {
-	cmd.Log(v, "\n*** Starting GZip decompression\n")
-	defer cmd.Log(v, "Ending GZip decompression ***\n")
+	cmd.Log(v, "*** Starting GZip decompression")
+	defer cmd.Log(v, "*** Ending GZip decompression")
 	gr, err := gzip.NewReader(r)
 	defer gr.Close()
 	if err != nil {
-		log.Fatal(err.Error())
+		cmd.Fatal("## " + err.Error())
 	}
 	tr := tar.NewReader(gr)
 	unarchive(v, dst, tr)
 }
 
 func decompressZip(v bool, dst, src string) {
-	cmd.Log(v, "\n*** Starting Zip decompression\n")
-	defer cmd.Log(v, "Ending Zip decompression ***\n")
+	cmd.Log(v, "*** Starting Zip decompression")
+	defer cmd.Log(v, "*** Ending Zip decompression")
 	zr, err := zip.OpenReader(src)
 	if err != nil {
-		log.Fatal(err.Error())
+		cmd.Fatal("## " + err.Error())
 	}
 	defer zr.Close()
 
 	for _, x := range zr.Reader.File {
-		cmd.Log(v, "Extracting: %s\n", x.Name)
+		cmd.Log(v, "Extracting: %s", x.Name)
 		c, err := x.Open()
 		if err != nil {
-			log.Fatal(err)
+			cmd.Fatal("## " + err.Error())
 		}
 
 		if x.FileInfo().IsDir() {
 			if err = os.MkdirAll(path.Join(dst, x.Name), 0777); err != nil && !os.IsExist(err) {
-				log.Fatal(err.Error())
+				cmd.Fatal("## " + err.Error())
 			}
 			c.Close()
 			continue
 		}
 
 		if err = os.MkdirAll(path.Join(dst, path.Dir(x.Name)), 0777); err != nil && !os.IsExist(err) {
-			log.Fatal(err.Error())
+			cmd.Fatal("## " + err.Error())
 		}
 		f, err := os.Create(path.Join(dst, x.Name))
 		if err != nil {
-			log.Fatal(err.Error())
+			cmd.Fatal("## " + err.Error())
 		}
 		if _, err = io.Copy(f, c); err != nil {
-			log.Fatal(err.Error())
+			cmd.Fatal("## " + err.Error())
 		}
 		f.Close()
 		c.Close()

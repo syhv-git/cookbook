@@ -7,8 +7,8 @@ import (
 )
 
 func QuickSort(v bool, t Tree, s string, b bool) {
-	cmd.Log(v, "\n*** Starting quicksort\n")
-	defer cmd.Log(v, "Ending quicksort ***\n")
+	cmd.Log(v, "*** Starting quicksort")
+	defer cmd.Log(v, "*** Ending quicksort")
 
 	switch s {
 	case "dir":
@@ -20,7 +20,7 @@ func QuickSort(v bool, t Tree, s string, b bool) {
 	case "size":
 		sorter(v, t, b, size)
 	default:
-		cmd.Log(v, "* Unknown sort type: %s\n", s)
+		cmd.Log(v, "* Unknown sort type: %s", s)
 	}
 }
 

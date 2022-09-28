@@ -6,7 +6,6 @@ import (
 	. "cookbook/file"
 	"cookbook/file/utility/sort"
 	"io"
-	"log"
 	"os"
 	"path"
 )
@@ -27,7 +26,7 @@ func Extractor(v bool, dst io.Writer, src ...string) {
 	res := NewTree(src...)
 	res = dirWalker(v, res)
 	if err := extractor(v, dst, res); err != nil {
-		log.Fatal(err.Error())
+		cmd.Fatal("## " + err.Error())
 	}
 }
 
@@ -38,31 +37,31 @@ func ExtractCopy(v bool, dst string, src ...string) {
 
 	buf := bytes.NewBuffer(nil)
 	if err := extractor(v, buf, res); err != nil {
-		log.Fatal(err.Error())
+		cmd.Fatal("## " + err.Error())
 	}
 
-	cmd.Log(v, "- Creating output file: %s\n", dst)
+	cmd.Log(v, "- Creating output file: %s", dst)
 	if err := os.MkdirAll(path.Dir(dst), 0777); err != nil && !os.IsExist(err) {
-		log.Fatal(err.Error())
+		cmd.Fatal("## " + err.Error())
 	}
 	if err := os.WriteFile(dst, buf.Bytes(), 0666); err != nil {
-		log.Fatal(err.Error())
+		cmd.Fatal("## " + err.Error())
 	}
-	cmd.Log(v, "* Successfully copied contents from %v\n", res)
+	cmd.Log(v, "* Successfully copied contents from %v", res)
 }
 
 func extractor(v bool, w io.Writer, t Tree) error {
-	cmd.Log(v, "\n*** Starting extraction\n")
-	defer cmd.Log(v, "Ending extraction ***\n")
+	cmd.Log(v, "*** Starting extraction")
+	defer cmd.Log(v, "*** Ending extraction")
 
 	for _, x := range t {
-		cmd.Log(v, "- Extracting contents: %s\n", x.Path)
+		cmd.Log(v, "- Extracting contents: %s", x.Path)
 		f, err := os.ReadFile(x.Path)
 		if err != nil {
 			continue
 		}
 		if err = os.MkdirAll(path.Dir(x.Path), 0777); err != nil && !os.IsExist(err) {
-			log.Fatal(err.Error())
+			cmd.Fatal("## " + err.Error())
 		}
 		if _, err = w.Write(f); err != nil {
 			return err
@@ -73,8 +72,8 @@ func extractor(v bool, w io.Writer, t Tree) error {
 
 func dirWalker(v bool, list Tree) Tree {
 	var all Tree
-	cmd.Log(v, "\n*** Starting enumeration\n")
-	defer cmd.Log(v, "Ending enumeration ***\n")
+	cmd.Log(v, "*** Starting enumeration")
+	defer cmd.Log(v, "*** Ending enumeration")
 
 	c := make(chan Node)
 	e := make(chan error)
@@ -89,7 +88,7 @@ wait:
 			}
 			all = all.Append(x)
 		case err := <-e:
-			log.Fatal(err.Error())
+			cmd.Fatal("## " + err.Error())
 		}
 	}
 	return all
