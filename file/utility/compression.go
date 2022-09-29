@@ -23,14 +23,21 @@ func CompressNew(v bool, dst string, src ...string) {
 		cmd.Fatal("## Destination %s must be relative", dst)
 	}
 
-	n := strings.Split(path.Base(dst), ".")
-	if len(n) < 2 {
-		cmd.Fatal("## Destination %s cannot be a directory\n", dst)
-	}
+	cmd.Log(v, "- Creating destination file: %s", dst)
 	if err := os.MkdirAll(path.Dir(path.Clean(dst)), 0777); err != nil && !os.IsExist(err) {
 		cmd.Fatal("## " + err.Error())
 	}
+	f, err := os.OpenFile(dst, os.O_CREATE|os.O_TRUNC|os.O_RDWR, 0666)
+	if err != nil {
+		cmd.Fatal("## " + err.Error())
+	}
+	defer f.Close()
+	info, _ := f.Stat()
+	if info.IsDir() {
+		cmd.Fatal("## Destination %s cannot be a directory", dst)
+	}
 
+	n := strings.Split(path.Base(dst), ".")
 	cmd.Log(v, "- Creating temp dir")
 	tmp, err := os.MkdirTemp(path.Dir(dst), n[0])
 	if err != nil {
@@ -38,18 +45,11 @@ func CompressNew(v bool, dst string, src ...string) {
 	}
 	defer os.RemoveAll(tmp)
 
-	cmd.Log(v, "- Creating the destination file at: %s", dst)
-	f, err := os.Create(dst)
-	if err != nil {
-		cmd.Fatal("## " + err.Error())
-	}
-	defer f.Close()
-
 	switch filepath.Ext(path.Base(dst)) {
-	case ".tar":
-		compressTar(v, tmp, n[0]+"/", f, src)
 	case ".gz":
 		compressGZ(v, tmp, n[0]+"/", f, src)
+	case ".tar":
+		compressTar(v, tmp, n[0]+"/", f, src)
 	case ".zip":
 		compressZip(v, tmp, n[0]+"/", f, src)
 	default:

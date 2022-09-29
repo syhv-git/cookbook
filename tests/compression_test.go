@@ -7,7 +7,7 @@ import (
 	"testing"
 )
 
-func TestNewCompression(t *testing.T) {
+func TestNewCompressionAndDecompression(t *testing.T) {
 	dst := "test.tar.gz"
 	utility.CompressNew(true, dst, "../.gitignore", "../file/types.go", "types_test.go")
 	f, err := os.Stat(dst)
@@ -31,4 +31,16 @@ func TestNewCompression(t *testing.T) {
 
 	os.Remove(dst)
 	os.RemoveAll("test")
+}
+
+func TestDecompression(t *testing.T) {
+	cmd.Log(true, "* Testing decompression")
+	utility.Decompress(true, "", "stego_test.jpg")
+	d, err := os.ReadDir("test")
+	if err != nil {
+		t.Fatal("## " + err.Error())
+	}
+	if len(d) < 1 {
+		t.Error("## Error when decompressing file")
+	}
 }

@@ -12,9 +12,9 @@ func TestCreateSteganographicFromArchive(t *testing.T) {
 	src := "test_stego.tar.gz"
 	utility.CompressNew(true, src, "../.gitignore", "../file/types.go", "types_test.go")
 
-	f, err := os.OpenFile("image_test.jpg", os.O_CREATE|os.O_TRUNC, 0666)
-	utility.GenerateRandomImage(true, 400, 400, f)
-	f.Close()
+	//f, err := os.OpenFile("image_test.jpg", os.O_CREATE|os.O_TRUNC, 0666)
+	//utility.GenerateRandomImage(true, 400, 400, f)
+	//f.Close()
 
 	forensics.CreateSteganographicFromArchive(true, dst, src, "image_test.jpg")
 	info, err := os.Stat(dst)

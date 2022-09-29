@@ -2,8 +2,8 @@ package tests
 
 import (
 	"bytes"
+	cmd "cookbook"
 	"cookbook/file/forensics"
-	"log"
 	"os"
 	"testing"
 )
@@ -14,7 +14,7 @@ func TestEnumeration(t *testing.T) {
 		t.Fatal("## Failed to enumerate project root")
 	}
 	for x := 0; x < 50; x++ {
-		log.Println(ret[x].Size())
+		cmd.Log(true, "%d", ret[x].Size())
 	}
 }
 
