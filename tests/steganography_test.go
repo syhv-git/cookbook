@@ -28,7 +28,7 @@ func TestCreateSteganographicFromArchive(t *testing.T) {
 		t.Error("## Error when detecting archive in image file")
 	}
 
-	//os.Remove(dst)
+	os.Remove(dst)
 	os.Remove(src)
 	//os.Remove(jpg)
 }
