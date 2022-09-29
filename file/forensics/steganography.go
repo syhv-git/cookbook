@@ -6,7 +6,6 @@ import (
 	cmd "cookbook"
 	"io"
 	"os"
-	"sync"
 )
 
 // CreateSteganographicFromArchive creates an image file that behave both as an image and archive.
@@ -37,6 +36,7 @@ func CreateSteganographicFromArchive(v bool, dst, src, jpg string) {
 	}
 	defer a.Close()
 
+	cmd.Log(v, "- Creating destination file: %s", dst)
 	s, err := os.OpenFile(dst, os.O_CREATE|os.O_TRUNC|os.O_WRONLY, 0777)
 	if err != nil {
 		cmd.Fatal("## " + err.Error())
@@ -78,44 +78,24 @@ func DetectArchiveFromImage(v bool, src string) bool {
 
 	info, _ := f.Stat()
 	for i := int64(0); i < info.Size(); i++ {
-		var wg *sync.WaitGroup
 		b, err := r.ReadByte()
 		if err != nil {
 			cmd.Fatal("## " + err.Error())
 		}
 
-		c := make(chan bool)
-		wg.Add(len(signatures))
-		go func(wg *sync.WaitGroup, c chan bool) {
-			wg.Wait()
-			close(c)
-		}(wg, c)
 		for _, s := range signatures {
-			go checkSignature(r, b, s, c, wg)
-		}
-		for {
-			x, ok := <-c
-			if !ok {
-				break
-			}
-			if x {
-				return true
+			if b == s[0] {
+				c := make([]byte, len(s)-1)
+				c, err := r.Peek(len(s) - 1)
+				if err != nil {
+					cmd.Fatal("## " + err.Error())
+				}
+				if bytes.Equal(c, s[1:]) {
+					cmd.Log(v, "* Detected embedded file signature (little endian): 0x%x", s[:])
+					return true
+				}
 			}
 		}
 	}
 	return false
-}
-
-func checkSignature(r *bufio.Reader, b byte, s []byte, v chan bool, wg *sync.WaitGroup) {
-	defer wg.Done()
-	if b == s[0] {
-		c := make([]byte, len(s)-1)
-		c, err := r.Peek(len(s) - 1)
-		if err != nil {
-			cmd.Fatal("## " + err.Error())
-		}
-		if bytes.Equal(c, s[1:]) {
-			v <- true
-		}
-	}
 }

@@ -53,7 +53,8 @@ func CompressNew(v bool, dst string, src ...string) {
 	case ".zip":
 		compressZip(v, tmp, n[0]+"/", f, src)
 	default:
-		cmd.Log(v, "* Unknown compression method: %v", strings.Join(n[1:], "."))
+		cmd.Log(v, "* Unknown compression method: %v\n- Attempting Zip compression", strings.Join(n[1:], "."))
+		compressZip(v, tmp, n[0]+"/", f, src)
 	}
 }
 
@@ -141,6 +142,8 @@ func Decompress(v bool, dst, src string) {
 		if err := os.MkdirAll(dst, 0777); err != nil && !os.IsExist(err) {
 			cmd.Fatal("## " + err.Error())
 		}
+	} else {
+		cmd.Fatal("## No destination file provided")
 	}
 	f, err := os.Open(src)
 	if err != nil {
@@ -155,7 +158,8 @@ func Decompress(v bool, dst, src string) {
 	case ".zip":
 		decompressZip(v, dst, src)
 	default:
-		cmd.Log(v, "* Unknown compression method: %v", strings.Join(strings.Split(path.Base(src), ".")[1:], "."))
+		cmd.Log(v, "* Unknown compression method: %v\n- Attempting Zip decompression", strings.Join(strings.Split(path.Base(src), ".")[1:], "."))
+		decompressZip(v, dst, src)
 	}
 }
 

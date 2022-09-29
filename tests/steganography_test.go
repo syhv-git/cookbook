@@ -9,7 +9,7 @@ import (
 
 func TestCreateSteganographicFromArchive(t *testing.T) {
 	dst := "stego_test.jpg"
-	src := "test_stego.tar.gz"
+	src := "test_stego.zip"
 	jpg := "image_test.jpg"
 	utility.CompressNew(true, src, "../.gitignore", "../file/types.go", "types_test.go")
 
@@ -27,6 +27,9 @@ func TestCreateSteganographicFromArchive(t *testing.T) {
 	if !b {
 		t.Error("## Error when detecting archive in image file")
 	}
+	
+	// Test decompress archive (for Zip archives, GZip doesnt seem to work)
+	//utility.Decompress(true, "test", dst)
 
 	os.Remove(dst)
 	os.Remove(src)
