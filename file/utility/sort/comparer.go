@@ -7,6 +7,34 @@ import (
 	"time"
 )
 
+func handleDesc[K any, T constraint](v, b bool, x, y K, data T) bool {
+	if b {
+		return compare(v, x, y, data)
+	}
+	return compare(v, y, x, data)
+}
+
+func compare[K any, T constraint](v bool, x, y K, data T) bool {
+	t := reflect.ValueOf(data)
+	d := reflect.Indirect(t)
+	i := d.Interface()
+	switch i.(type) {
+	case sortDir:
+		return compareDir(v, x, y)
+	case sortMod:
+		return compareMod(v, x, y)
+	case sortName:
+		return compareName(v, x, y)
+	case sortSize:
+		return compareSize(v, x, y)
+	default:
+		return false
+	}
+}
+
+/*
+All compare functions evaluate x > y in its own type context and return the expression results.
+*/
 func compareDir(v bool, x, y any) bool {
 	i := reflect.ValueOf(x).String()
 	j := reflect.ValueOf(y).String()
