@@ -2,9 +2,8 @@ package forensics
 
 import (
 	"bytes"
-	"cookbook/cmd"
-	. "cookbook/file"
-	"cookbook/file/utility/sort"
+	"github.com/syhv-git/cookbook/cmd"
+	"github.com/syhv-git/cookbook/file/utility/sort"
 	"io"
 	"os"
 	"path"

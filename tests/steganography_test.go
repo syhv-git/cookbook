@@ -1,8 +1,8 @@
 package tests
 
 import (
-	"cookbook/file/forensics"
-	"cookbook/file/utility"
+	"github.com/syhv-git/cookbook/file/forensics"
+	"github.com/syhv-git/cookbook/file/utility"
 	"os"
 	"testing"
 )
@@ -27,7 +27,7 @@ func TestCreateSteganographicFromArchive(t *testing.T) {
 	if !b {
 		t.Error("## Error when detecting archive in image file")
 	}
-	
+
 	// Test decompress archive (for Zip archives, GZip doesnt seem to work)
 	//utility.Decompress(true, "test", dst)
 

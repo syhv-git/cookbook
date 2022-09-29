@@ -1,7 +1,6 @@
 package sort
 
 import (
-	. "cookbook/file"
 	"time"
 )
 

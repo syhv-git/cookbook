@@ -1,8 +1,7 @@
 package sort
 
 import (
-	"cookbook/cmd"
-	. "cookbook/file"
+	"github.com/syhv-git/cookbook/cmd"
 	"reflect"
 )
 

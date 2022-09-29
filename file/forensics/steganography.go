@@ -3,7 +3,7 @@ package forensics
 import (
 	"bufio"
 	"bytes"
-	"cookbook/cmd"
+	"github.com/syhv-git/cookbook/cmd"
 	"io"
 	"os"
 )

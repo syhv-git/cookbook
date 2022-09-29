@@ -1,7 +1,7 @@
 package tests
 
 import (
-	"cookbook/network/utility"
+	"github.com/syhv-git/cookbook/network/utility"
 	"os"
 	"testing"
 )

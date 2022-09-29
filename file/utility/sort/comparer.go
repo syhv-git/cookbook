@@ -1,7 +1,7 @@
 package sort
 
 import (
-	"cookbook/cmd"
+	"github.com/syhv-git/cookbook/cmd"
 	"reflect"
 	"strings"
 	"time"

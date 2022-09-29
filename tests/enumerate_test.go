@@ -2,8 +2,8 @@ package tests
 
 import (
 	"bytes"
-	"cookbook/cmd"
-	"cookbook/file/forensics"
+	"github.com/syhv-git/cookbook/cmd"
+	"github.com/syhv-git/cookbook/file/forensics"
 	"os"
 	"testing"
 )

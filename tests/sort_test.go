@@ -1,8 +1,8 @@
 package tests
 
 import (
-	types "cookbook/file"
-	"cookbook/file/utility/sort"
+	types "github.com/syhv-git/cookbook/file"
+	"github.com/syhv-git/cookbook/file/utility/sort"
 	"os"
 	"testing"
 )

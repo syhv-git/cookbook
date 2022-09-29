@@ -1,7 +1,7 @@
 package tests
 
 import (
-	"cookbook/file/utility"
+	"github.com/syhv-git/cookbook/file/utility"
 	"os"
 	"testing"
 )

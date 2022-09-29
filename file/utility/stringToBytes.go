@@ -1,7 +1,7 @@
 package utility
 
 import (
-	"cookbook/cmd"
+	"github.com/syhv-git/cookbook/cmd"
 	"os"
 )
 
