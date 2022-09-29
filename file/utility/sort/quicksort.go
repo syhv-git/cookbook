@@ -1,7 +1,7 @@
 package sort
 
 import (
-	cmd "cookbook"
+	"cookbook/cmd"
 	. "cookbook/file"
 	"reflect"
 )

@@ -1,0 +1,5 @@
+package forensics
+
+func HostnameFromIP() {
+
+}

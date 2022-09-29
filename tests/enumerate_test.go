@@ -2,7 +2,7 @@ package tests
 
 import (
 	"bytes"
-	cmd "cookbook"
+	"cookbook/cmd"
 	"cookbook/file/forensics"
 	"os"
 	"testing"

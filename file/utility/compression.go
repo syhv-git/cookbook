@@ -5,7 +5,7 @@ import (
 	"archive/zip"
 	"bytes"
 	"compress/gzip"
-	cmd "cookbook"
+	"cookbook/cmd"
 	types "cookbook/file"
 	"cookbook/file/forensics"
 	"io"

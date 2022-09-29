@@ -1,7 +1,7 @@
 package utility
 
 import (
-	cmd "cookbook"
+	"cookbook/cmd"
 	"io"
 	"net/http"
 	"os"

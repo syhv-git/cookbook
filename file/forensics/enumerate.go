@@ -2,7 +2,7 @@ package forensics
 
 import (
 	"bytes"
-	cmd "cookbook"
+	"cookbook/cmd"
 	. "cookbook/file"
 	"cookbook/file/utility/sort"
 	"io"

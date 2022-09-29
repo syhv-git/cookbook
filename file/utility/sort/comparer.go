@@ -1,7 +1,7 @@
 package sort
 
 import (
-	cmd "cookbook"
+	"cookbook/cmd"
 	"reflect"
 	"strings"
 	"time"

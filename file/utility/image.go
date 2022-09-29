@@ -1,7 +1,7 @@
 package utility
 
 import (
-	cmd "cookbook"
+	"cookbook/cmd"
 	"image"
 	"image/jpeg"
 	"io"

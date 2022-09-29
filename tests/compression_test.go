@@ -1,7 +1,7 @@
 package tests
 
 import (
-	cmd "cookbook"
+	"cookbook/cmd"
 	"cookbook/file/utility"
 	"os"
 	"testing"
