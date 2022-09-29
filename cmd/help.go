@@ -1,0 +1,13 @@
+package cmd
+
+const (
+	help = ""
+)
+
+func Help(mode string) {
+	switch mode {
+	case "basic":
+	default:
+		Fatal("## Unknown keyword: %s\n\tExpected: cookbook file:enumerate help", mode)
+	}
+}

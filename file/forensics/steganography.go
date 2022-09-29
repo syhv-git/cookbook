@@ -15,13 +15,13 @@ func CreateSteganographicFromArchive(v bool, dst, src, jpg string) {
 	cmd.Log(v, "*** Starting Steganography")
 	defer cmd.Log(v, "*** Ending Steganography")
 	if src == "" {
-		cmd.Fatal("## Source file was not provided")
+		cmd.Fatal("## No Source file provided")
 	}
 	if dst == "" {
-		cmd.Fatal("## Destination file was not provided")
+		cmd.Fatal("## No Destination file provided")
 	}
 	if jpg == "" {
-		cmd.Fatal("## Source image file was not provided")
+		cmd.Fatal("## No Source image file provided")
 	}
 
 	j, err := os.Open(jpg)

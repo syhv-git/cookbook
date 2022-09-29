@@ -1,5 +1,0 @@
-package forensics
-
-func HostnameFromIP() {
-
-}
