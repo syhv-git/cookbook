@@ -18,11 +18,11 @@ func StringToBytes(v bool, l int, s string) (bs []byte) {
 	cmd.Log(v, "- Printing the string as bytes")
 	switch l {
 	case 16:
-		bs = littleEndian(v, bs, 2)
+		bs = littleEndian(bs, 2)
 	case 32:
-		bs = littleEndian(v, bs, 4)
+		bs = littleEndian(bs, 4)
 	case 64:
-		bs = littleEndian(v, bs, 8)
+		bs = littleEndian(bs, 8)
 	}
 
 	if v {
@@ -33,7 +33,7 @@ func StringToBytes(v bool, l int, s string) (bs []byte) {
 	return
 }
 
-func littleEndian(v bool, bs []byte, r int) []byte {
+func littleEndian(bs []byte, r int) []byte {
 	dif := len(bs) % r
 	size := len(bs) + dif
 	res := make([]byte, size)
