@@ -1,6 +1,8 @@
 package forensics
 
 import (
+	"bufio"
+	"bytes"
 	cmd "cookbook"
 	"io"
 	"os"
@@ -10,6 +12,8 @@ import (
 // dst is the path for the new image archive and src is the path to the archive.
 // jpg is an optional path to an image file
 func CreateSteganographicFromArchive(v bool, dst, src, jpg string) {
+	cmd.Log(v, "*** Starting Steganography")
+	defer cmd.Log(v, "*** Ending Steganography")
 	if src == "" {
 		cmd.Fatal("## Source file was not provided")
 	}
@@ -19,6 +23,7 @@ func CreateSteganographicFromArchive(v bool, dst, src, jpg string) {
 	if jpg == "" {
 		cmd.Fatal("## Source image file was not provided")
 	}
+
 	j, err := os.Open(jpg)
 	if err != nil {
 		cmd.Fatal("## " + err.Error())
@@ -45,6 +50,48 @@ func CreateSteganographicFromArchive(v bool, dst, src, jpg string) {
 	}
 }
 
-//func DetectArchiveFromImage(v bool, src string) {
-//
-//}
+var signatures = [][]byte{
+	{'\x37', '\x7A', '\xBC', '\xAF', '\x27', '\x1C'}, // 7Zip
+	{'\x42', '\x5a', '\x68'},                         // BZip2
+	{'\x7F', '\x45', '\x4C', '\x46'},                 // ELF
+	{'\x1f', '\x8b'},                                 // GZip
+	{'\x1f', '\xa0'},                                 // LZH
+	{'\x4C', '\x5A', '\x49', '\x50'},                 // LZip
+	{'\x1f', '\x9d'},                                 // LZW
+	{'\x52', '\x61', '\x72', '\x21', '\x1A', '\x07'}, // RAR
+	{'\x75', '\x73', '\x74', '\x61', '\x72'},         // Tar
+	{'\x50', '\x4b', '\x03', '\x04'},                 // Zip
+}
+
+func DetectArchiveFromImage(v bool, src string) bool {
+	cmd.Log(v, "*** Starting Steganography detection")
+	defer cmd.Log(v, "*** Ending Steganography detection")
+
+	f, err := os.Open(src)
+	if err != nil {
+		cmd.Fatal("## " + err.Error())
+	}
+	r := bufio.NewReader(f)
+
+	info, _ := f.Stat()
+	for i := int64(0); i < info.Size(); i++ {
+		b, err := r.ReadByte()
+		if err != nil {
+			cmd.Fatal("## " + err.Error())
+		}
+
+		for _, s := range signatures {
+			if b == s[0] {
+				c := make([]byte, len(s)-1)
+				c, err := r.Peek(len(s) - 1)
+				if err != nil {
+					cmd.Fatal("## " + err.Error())
+				}
+				if bytes.Equal(c, s[1:]) {
+					return true
+				}
+			}
+		}
+	}
+	return false
+}

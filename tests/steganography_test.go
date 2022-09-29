@@ -10,13 +10,10 @@ import (
 func TestCreateSteganographicFromArchive(t *testing.T) {
 	dst := "stego_test.jpg"
 	src := "test_stego.tar.gz"
+	jpg := "image_test.jpg"
 	utility.CompressNew(true, src, "../.gitignore", "../file/types.go", "types_test.go")
 
-	//f, err := os.OpenFile("image_test.jpg", os.O_CREATE|os.O_TRUNC, 0666)
-	//utility.GenerateRandomImage(true, 400, 400, f)
-	//f.Close()
-
-	forensics.CreateSteganographicFromArchive(true, dst, src, "image_test.jpg")
+	forensics.CreateSteganographicFromArchive(true, dst, src, jpg)
 	info, err := os.Stat(dst)
 	if err != nil {
 		t.Fatal("## " + err.Error())
@@ -25,7 +22,13 @@ func TestCreateSteganographicFromArchive(t *testing.T) {
 		t.Error("## Error when creating steganographic archive file")
 	}
 
-	os.Remove(dst)
+	// TestDetectArchiveFromImage
+	b := forensics.DetectArchiveFromImage(true, dst)
+	if !b {
+		t.Error("## Error when detecting archive in image file")
+	}
+
+	//os.Remove(dst)
 	os.Remove(src)
-	os.Remove("image_test.jpg")
+	//os.Remove(jpg)
 }
