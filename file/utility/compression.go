@@ -22,14 +22,15 @@ func CompressNew(v bool, dst string, src ...string) {
 	if path.IsAbs(dst) {
 		cmd.Fatal("## Destination %s must be relative", dst)
 	}
+
 	n := strings.Split(path.Base(dst), ".")
 	if len(n) < 2 {
 		cmd.Fatal("## Destination %s cannot be a directory\n", dst)
 	}
-
 	if err := os.MkdirAll(path.Dir(path.Clean(dst)), 0777); err != nil && !os.IsExist(err) {
 		cmd.Fatal("## " + err.Error())
 	}
+
 	cmd.Log(v, "- Creating temp dir")
 	tmp, err := os.MkdirTemp(path.Dir(dst), n[0])
 	if err != nil {
@@ -79,6 +80,7 @@ func archive(dst string, t types.Tree, tw *tar.Writer) {
 			ModTime: x.ModTime(),
 			Size:    x.Size(),
 		}
+
 		if err := tw.WriteHeader(h); err != nil {
 			cmd.Fatal("## " + err.Error())
 		}
@@ -160,6 +162,7 @@ func Decompress(v bool, dst, src string) {
 func decompressTar(v bool, r io.Reader, dst string) {
 	cmd.Log(v, "*** Starting Tar decompression")
 	defer cmd.Log(v, "*** Ending Tar decompression")
+
 	tr := tar.NewReader(r)
 	unarchive(v, dst, tr)
 }
@@ -201,6 +204,7 @@ func unarchive(v bool, dst string, tr *tar.Reader) {
 func decompressGZ(v bool, r io.Reader, dst string) {
 	cmd.Log(v, "*** Starting GZip decompression")
 	defer cmd.Log(v, "*** Ending GZip decompression")
+
 	gr, err := gzip.NewReader(r)
 	defer gr.Close()
 	if err != nil {
@@ -213,6 +217,7 @@ func decompressGZ(v bool, r io.Reader, dst string) {
 func decompressZip(v bool, dst, src string) {
 	cmd.Log(v, "*** Starting Zip decompression")
 	defer cmd.Log(v, "*** Ending Zip decompression")
+
 	zr, err := zip.OpenReader(src)
 	if err != nil {
 		cmd.Fatal("## " + err.Error())
