@@ -3,6 +3,7 @@ package forensics
 import (
 	"bytes"
 	"github.com/syhv-git/cookbook/cmd"
+	. "github.com/syhv-git/cookbook/file"
 	"github.com/syhv-git/cookbook/file/utility/sort"
 	"io"
 	"os"

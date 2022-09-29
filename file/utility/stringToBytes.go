@@ -29,6 +29,7 @@ func StringToBytes(v bool, l int, s string) (bs []byte) {
 		if _, err := os.Stdout.Write(bs); err != nil {
 			cmd.Fatal("## " + err.Error())
 		}
+		os.Stdout.Write([]byte{'\n'})
 	}
 	return
 }
@@ -39,7 +40,7 @@ func littleEndian(bs []byte, r int) []byte {
 	res := make([]byte, size)
 
 	for i := 0; i < size/r; i += r {
-		for j, k := i, i+r; j < k; j, k = j+1, k-1 {
+		for j, k := i*r, i*r+r; j < k; j, k = j+1, k-1 {
 			if k < len(bs) {
 				res[j], res[k] = bs[k], bs[j]
 			} else {

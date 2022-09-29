@@ -1,6 +1,7 @@
 package sort
 
 import (
+	. "github.com/syhv-git/cookbook/file"
 	"time"
 )
 

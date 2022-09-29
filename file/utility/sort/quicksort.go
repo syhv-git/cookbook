@@ -2,6 +2,7 @@ package sort
 
 import (
 	"github.com/syhv-git/cookbook/cmd"
+	. "github.com/syhv-git/cookbook/file"
 	"reflect"
 )
 
