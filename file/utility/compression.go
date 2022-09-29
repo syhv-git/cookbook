@@ -53,7 +53,7 @@ func CompressNew(v bool, dst string, src ...string) {
 	case ".zip":
 		compressZip(v, tmp, n[0]+"/", f, src)
 	default:
-		cmd.Log(v, "* Unknown compression method: %v\n- Attempting Zip compression", strings.Join(n[1:], "."))
+		cmd.Log(v, "* Unknown compression method: %#v\n- Attempting Zip compression", strings.Join(n[1:], "."))
 		compressZip(v, tmp, n[0]+"/", f, src)
 	}
 }
@@ -158,7 +158,7 @@ func Decompress(v bool, dst, src string) {
 	case ".zip":
 		decompressZip(v, dst, src)
 	default:
-		cmd.Log(v, "* Unknown compression method: %v\n- Attempting Zip decompression", strings.Join(strings.Split(path.Base(src), ".")[1:], "."))
+		cmd.Log(v, "* Unknown compression method: %#v\n- Attempting Zip decompression", strings.Join(strings.Split(path.Base(src), ".")[1:], "."))
 		decompressZip(v, dst, src)
 	}
 }

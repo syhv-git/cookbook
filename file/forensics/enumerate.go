@@ -47,7 +47,7 @@ func ExtractCopy(v bool, dst string, src ...string) {
 	if err := os.WriteFile(dst, buf.Bytes(), 0666); err != nil {
 		cmd.Fatal("## " + err.Error())
 	}
-	cmd.Log(v, "* Successfully copied contents from %v", res)
+	cmd.Log(v, "* Successfully copied contents from %#v", res)
 }
 
 func extractor(v bool, w io.Writer, t Tree) error {

@@ -31,7 +31,7 @@ func compareDir(v bool, x, y any) bool {
 func compareMod(v bool, x, y any) bool {
 	i := reflect.ValueOf(x).String()
 	j := reflect.ValueOf(y).String()
-	cmd.Log(v, "- Comparing last modified times:\n%v\n%v", x, y)
+	cmd.Log(v, "- Comparing last modified times:\n%#v\n%#v", x, y)
 
 	a, err := time.Parse(time.RFC3339Nano, i)
 	if err != nil {
@@ -43,10 +43,10 @@ func compareMod(v bool, x, y any) bool {
 	}
 
 	if a.After(b) {
-		cmd.Log(v, "- %v comes before %v", a, b)
+		cmd.Log(v, "- %#v comes before %#v", a, b)
 		return true
 	}
-	cmd.Log(v, "- %v comes before %v", b, a)
+	cmd.Log(v, "- %#v comes before %#v", b, a)
 	return false
 }
 

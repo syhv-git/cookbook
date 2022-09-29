@@ -2,7 +2,6 @@ package utility
 
 import (
 	"github.com/syhv-git/cookbook/cmd"
-	"os"
 )
 
 // StringToBytes converts a string to raw byte form.
@@ -25,27 +24,26 @@ func StringToBytes(v bool, l int, s string) (bs []byte) {
 		bs = littleEndian(bs, 8)
 	}
 
-	if v {
-		if _, err := os.Stdout.Write(bs); err != nil {
-			cmd.Fatal("## " + err.Error())
-		}
-		os.Stdout.Write([]byte{'\n'})
-	}
+	cmd.Log(v, "%0X", bs)
 	return
 }
 
 func littleEndian(bs []byte, r int) []byte {
 	dif := len(bs) % r
-	size := len(bs) + dif
+	size := len(bs) + (r - dif)
 	res := make([]byte, size)
 
-	for i := 0; i < size/r; i += r {
-		for j, k := i*r, i*r+r; j < k; j, k = j+1, k-1 {
-			if k < len(bs) {
+	for i := 0; i < size/r; i++ {
+		for j, k := i*r, i*r+r-1; j < k; j, k = j+1, k-1 {
+			if k < len(bs) && j < len(bs) {
 				res[j], res[k] = bs[k], bs[j]
-			} else {
-				res[j], res[k] = '\x00', bs[j]
+				continue
 			}
+			if j < len(bs) {
+				res[j], res[k] = '\x00', bs[j]
+				continue
+			}
+			res[j], res[k] = '\x00', '\x00'
 		}
 	}
 	return res

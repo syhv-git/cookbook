@@ -8,7 +8,7 @@ import (
 
 func TestStringToBytes(t *testing.T) {
 	b := utility.StringToBytes(true, 32, "Hello World!\n")
-	if !bytes.Equal(b, []byte{'H', 'e', 'l', 'l', 'o', ' ', 'W', 'o', 'r', 'l', 'd', '!', '\n'}) {
+	if !bytes.Equal(b, []byte{'l', 'l', 'e', 'H', 'o', 'W', ' ', 'o', '!', 'd', 'l', 'r', '\x00', '\x00', '\x00', '\n'}) {
 		t.Error("## Error when converting string to bytes in little-endian with 32-bit registers")
 	}
 }
