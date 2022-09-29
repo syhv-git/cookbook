@@ -21,6 +21,7 @@ const (
 var (
 	files      = single{id: 0, name: "Files", description: "Package of commands for file interactions"}
 	networking = single{id: 1, name: "Networking", description: "Package of commands involving network activity"}
+	help       = single{name: "Help", description: "Read the documentation for all usable commands from this package"}
 
 	forensics = single{id: 0, name: "Forensics", description: "Package of commands for performing forensics"}
 	utility   = single{id: 1, name: "Utility", description: "Package of utility commands for handling files"}
@@ -40,13 +41,13 @@ var (
 )
 
 var (
-	page = nested{id: 0, name: "Select Type", children: []single{files, networking}}
-
+	page        = nested{id: 0, name: "Select Type", children: []single{files, networking, help}}
 	filePage    = nested{id: 0, name: "Files", children: []single{forensics, utility}}
 	networkPage = nested{id: 1, name: "Networking", children: []single{forensics, utility}}
 
-	fileForensics    = nested{id: 0, name: "Forensics", children: []single{checksum, enumerate, extract, stego}}
-	fileUtility      = nested{id: 1, name: "Utility", children: []single{compress}}
-	networkForensics = nested{id: 0, name: "Forensics", children: []single{discovery}}
-	networkUtility   = nested{id: 1, name: "Utility", children: []single{download}}
+	fileForensics = nested{id: 0, name: "Forensics", children: []single{checksum, enumerate, extract, stego, help}}
+	fileUtility   = nested{id: 1, name: "Utility", children: []single{compress, help}}
+
+	networkForensics = nested{id: 0, name: "Forensics", children: []single{discovery, help}}
+	networkUtility   = nested{id: 1, name: "Utility", children: []single{download, help}}
 )

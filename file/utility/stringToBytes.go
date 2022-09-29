@@ -5,32 +5,47 @@ import (
 	"os"
 )
 
-func StringToBytes(v, l bool, s string) (bs []byte) {
+// StringToBytes converts a string to raw byte form.
+// The variable l defines register size for little-endian. 0 value indicates big-endian
+func StringToBytes(v bool, l int, s string) (bs []byte) {
 	if s == "" {
 		cmd.Fatal("## No string provided")
 	}
+
 	for _, b := range s {
 		bs = append(bs, byte(b))
 	}
-	if v {
-		cmd.Log(v, "- Printing the string as bytes")
-		if !l {
-			if _, err := os.Stdout.Write(bs); err != nil {
-				cmd.Fatal("## " + err.Error())
-			}
-		} else {
-			o := len(bs) % 4
-			if o != 0 {
+	cmd.Log(v, "- Printing the string as bytes")
+	switch l {
+	case 16:
+		bs = littleEndian(v, bs, 2)
+	case 32:
+		bs = littleEndian(v, bs, 4)
+	case 64:
+		bs = littleEndian(v, bs, 8)
+	}
 
-			}
-			// every 4 bytes are reversed
-			for i := 0; i < len(bs)-1; i += 4 {
-				bs[i], bs[i+1], bs[i+2], bs[i+3] = bs[i+3], bs[i+2], bs[i+1], bs[i]
-			}
-			if _, err := os.Stdout.Write(bs); err != nil {
-				cmd.Fatal("## " + err.Error())
-			}
+	if v {
+		if _, err := os.Stdout.Write(bs); err != nil {
+			cmd.Fatal("## " + err.Error())
 		}
 	}
 	return
+}
+
+func littleEndian(v bool, bs []byte, r int) []byte {
+	dif := len(bs) % r
+	size := len(bs) + dif
+	res := make([]byte, size)
+
+	for i := 0; i < size/r; i += r {
+		for j, k := i, i+r; j < k; j, k = j+1, k-1 {
+			if k < len(bs) {
+				res[j], res[k] = bs[k], bs[j]
+			} else {
+				res[j], res[k] = '\x00', bs[j]
+			}
+		}
+	}
+	return res
 }

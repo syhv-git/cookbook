@@ -1,9 +1,5 @@
 package cmd
 
-const (
-	help = ""
-)
-
 func Help(mode string) {
 	switch mode {
 	case "basic":
