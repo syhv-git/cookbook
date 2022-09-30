@@ -39,22 +39,19 @@ func merge[T constraint](v, b bool, t types.Tree, l, m, r int, data T) {
 		return
 	}
 
-	for m2 := m + 1; l <= m && m2 <= r; l, m, m2 = l+1, m+1, m2+1 {
+	for m2 := m + 1; l <= m && m2 <= r; {
 		if handleDesc(v, b, data.handle(t[m]), data.handle(t[m2]), data) {
-			l += 1
+			l++
 			continue
 		}
 		i, n := m2, t[m2]
 		for ; i > l; i-- {
-			if handleDesc(v, b, data.handle(t[i-1]), data.handle(t[i]), data) {
-				break
+			if handleDesc(v, b, data.handle(t[i-1]), data.handle(n), data) {
+				n, t[i-1] = t[i-1], n
 			}
 			t[i] = t[i-1]
 		}
-		if i > l {
-			t[i] = n
-		} else {
-			t[l] = n
-		}
+		t[l] = n
+		l, m, m2 = l+1, m+1, m2+1
 	}
 }
