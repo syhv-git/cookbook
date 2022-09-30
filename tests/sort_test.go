@@ -6,6 +6,31 @@ import (
 	"testing"
 )
 
+func TestBubbleSort(t *testing.T) {
+	f1, f2 := "../.gitattributes", "../file/forensics/enumerate.go"
+	tree := types.NewTree(f1, f2)
+
+	sort.BubbleSort(true, true, "dir", tree)
+	if tree[0].Path != f2 {
+		t.Errorf("## Error when sorting a tree %#v", tree)
+	}
+
+	sort.BubbleSort(true, true, "mod", tree)
+	if tree[0].Path != f2 {
+		t.Errorf("## Error when sorting a tree %#v", tree)
+	}
+
+	sort.BubbleSort(true, true, "name", tree)
+	if tree[0].Path != f2 {
+		t.Errorf("## Error when sorting a tree %#v", tree)
+	}
+
+	sort.BubbleSort(true, true, "size", tree)
+	if tree[0].Path != f2 {
+		t.Errorf("## Error when sorting a tree %#v", tree)
+	}
+}
+
 func TestInsertionSort(t *testing.T) {
 	f1, f2 := "../.gitattributes", "../file/forensics/enumerate.go"
 	tree := types.NewTree(f1, f2)
@@ -26,6 +51,31 @@ func TestInsertionSort(t *testing.T) {
 	}
 
 	sort.InsertionSort(true, true, "size", tree)
+	if tree[0].Path != f2 {
+		t.Errorf("## Error when sorting a tree %#v", tree)
+	}
+}
+
+func TestMergeSort(t *testing.T) {
+	f1, f2 := "../.gitattributes", "../file/forensics/enumerate.go"
+	tree := types.NewTree(f1, f2)
+
+	sort.MergeSort(true, true, "dir", tree)
+	if tree[0].Path != f2 {
+		t.Errorf("## Error when sorting a tree %#v", tree)
+	}
+
+	sort.MergeSort(true, true, "mod", tree)
+	if tree[0].Path != f2 {
+		t.Errorf("## Error when sorting a tree %#v", tree)
+	}
+
+	sort.MergeSort(true, true, "name", tree)
+	if tree[0].Path != f2 {
+		t.Errorf("## Error when sorting a tree %#v", tree)
+	}
+
+	sort.MergeSort(true, true, "size", tree)
 	if tree[0].Path != f2 {
 		t.Errorf("## Error when sorting a tree %#v", tree)
 	}
