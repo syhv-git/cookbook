@@ -48,9 +48,12 @@ func compareDir(v bool, x, y any) bool {
 		cmd.Log(v, "- %s has more parent directories", i)
 		return true
 	}
-
-	n := strings.Compare(i, j)
-	if n == 1 {
+	if len(q) > len(p) {
+		cmd.Log(v, "- %s has more parent directories", i)
+		return false
+	}
+ 
+	if strings.Compare(i, j) == 1 {
 		cmd.Log(v, "- %s comes before %s", i, j)
 		return true
 	}

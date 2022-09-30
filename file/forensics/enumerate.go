@@ -12,7 +12,7 @@ import (
 
 // Enumerate recursively walks through directories and sorts the discovered files before returning the list.
 // sortBy must be one of ("dir" | "mod" | "name" | "size")
-// sortAlg must be one of ("" | "insertion" | "quick") the empty string defaults to quicksort.
+// sortAlg must be one of ("" | "bubble" | "insertion" | "merge" | "quick" | "selection") the empty string defaults to quicksort.
 // desc defines whether the contents are sorted in descending order or ascending order
 // paths is a variadic list of paths to enumerate
 func Enumerate(v bool, sortBy, sortAlg string, desc bool, paths ...string) Tree {

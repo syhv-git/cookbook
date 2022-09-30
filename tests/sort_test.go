@@ -6,127 +6,23 @@ import (
 	"testing"
 )
 
-func TestBubbleSort(t *testing.T) {
-	f1, f2 := "../.gitattributes", "../file/forensics/enumerate.go"
-	tree := types.NewTree(f1, f2)
+func TestSortingFunction(t *testing.T) {
+	f1, f2, f3 := "../.gitattributes", "../file/forensics/enumerate.go", "enumerate_test.go"
+	tree := types.NewTree(f1, f2, f3)
 
-	sort.BubbleSort(true, true, "dir", tree)
-	if tree[0].Path != f2 {
-		t.Errorf("## Error when sorting a tree %#v", tree)
-	}
-
-	sort.BubbleSort(true, true, "mod", tree)
-	if tree[0].Path != f2 {
-		t.Errorf("## Error when sorting a tree %#v", tree)
-	}
-
-	sort.BubbleSort(true, true, "name", tree)
-	if tree[0].Path != f2 {
-		t.Errorf("## Error when sorting a tree %#v", tree)
-	}
-
-	sort.BubbleSort(true, true, "size", tree)
-	if tree[0].Path != f2 {
-		t.Errorf("## Error when sorting a tree %#v", tree)
-	}
-}
-
-func TestInsertionSort(t *testing.T) {
-	f1, f2 := "../.gitattributes", "../file/forensics/enumerate.go"
-	tree := types.NewTree(f1, f2)
-
-	sort.InsertionSort(true, true, "dir", tree)
-	if tree[0].Path != f2 {
-		t.Errorf("## Error when sorting a tree %#v", tree)
-	}
-
-	sort.InsertionSort(true, true, "mod", tree)
-	if tree[0].Path != f2 {
-		t.Errorf("## Error when sorting a tree %#v", tree)
-	}
-
-	sort.InsertionSort(true, true, "name", tree)
-	if tree[0].Path != f2 {
-		t.Errorf("## Error when sorting a tree %#v", tree)
-	}
-
-	sort.InsertionSort(true, true, "size", tree)
-	if tree[0].Path != f2 {
-		t.Errorf("## Error when sorting a tree %#v", tree)
-	}
-}
-
-func TestMergeSort(t *testing.T) {
-	f1, f2 := "../.gitattributes", "../file/forensics/enumerate.go"
-	tree := types.NewTree(f1, f2)
-
-	sort.MergeSort(true, true, "dir", tree)
-	if tree[0].Path != f2 {
-		t.Errorf("## Error when sorting a tree %#v", tree)
-	}
-
+	//sort.BubbleSort(true, true, "name", tree)
+	//sort.InsertionSort(true, true, "size", tree)
 	sort.MergeSort(true, true, "mod", tree)
-	if tree[0].Path != f2 {
-		t.Errorf("## Error when sorting a tree %#v", tree)
-	}
 
-	sort.MergeSort(true, true, "name", tree)
 	if tree[0].Path != f2 {
-		t.Errorf("## Error when sorting a tree %#v", tree)
+		t.Errorf("## Error when sorting function; %#v", tree)
 	}
-
-	sort.MergeSort(true, true, "size", tree)
-	if tree[0].Path != f2 {
-		t.Errorf("## Error when sorting a tree %#v", tree)
-	}
-}
-
-func TestQuickSort(t *testing.T) {
-	f1, f2 := "../.gitattributes", "../file/forensics/enumerate.go"
-	tree := types.NewTree(f1, f2)
+	tree[0], tree[1], tree[2] = tree[2], tree[0], tree[1]
 
 	sort.QuickSort(true, true, "dir", tree)
-	if tree[0].Path != f2 {
-		t.Errorf("## Error when sorting a tree %#v", tree)
-	}
+	//sort.SelectionSort(true, true, "name", tree)
 
-	sort.QuickSort(true, true, "mod", tree)
 	if tree[0].Path != f2 {
-		t.Errorf("## Error when sorting a tree %#v", tree)
-	}
-
-	sort.QuickSort(true, true, "name", tree)
-	if tree[0].Path != f2 {
-		t.Errorf("## Error when sorting a tree %#v", tree)
-	}
-
-	sort.QuickSort(true, true, "size", tree)
-	if tree[0].Path != f2 {
-		t.Errorf("## Error when sorting a tree %#v", tree)
-	}
-}
-
-func TestSelectionSort(t *testing.T) {
-	f1, f2 := "../.gitattributes", "../file/forensics/enumerate.go"
-	tree := types.NewTree(f1, f2)
-
-	sort.SelectionSort(true, true, "dir", tree)
-	if tree[0].Path != f2 {
-		t.Errorf("## Error when sorting a tree %#v", tree)
-	}
-
-	sort.SelectionSort(true, true, "mod", tree)
-	if tree[0].Path != f2 {
-		t.Errorf("## Error when sorting a tree %#v", tree)
-	}
-
-	sort.SelectionSort(true, true, "name", tree)
-	if tree[0].Path != f2 {
-		t.Errorf("## Error when sorting a tree %#v", tree)
-	}
-
-	sort.SelectionSort(true, true, "size", tree)
-	if tree[0].Path != f2 {
-		t.Errorf("## Error when sorting a tree %#v", tree)
+		t.Errorf("## Error when sorting function; %#v", tree)
 	}
 }
