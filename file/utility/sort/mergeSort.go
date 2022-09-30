@@ -44,10 +44,17 @@ func merge[T constraint](v, b bool, t types.Tree, l, m, r int, data T) {
 			l += 1
 			continue
 		}
-		n := t[m2]
-		for i := m2; i > l; i-- {
+		i, n := m2, t[m2]
+		for ; i > l; i-- {
+			if handleDesc(v, b, data.handle(t[i-1]), data.handle(t[i]), data) {
+				break
+			}
 			t[i] = t[i-1]
 		}
-		t[l] = n
+		if i > l {
+			t[i] = n
+		} else {
+			t[l] = n
+		}
 	}
 }
