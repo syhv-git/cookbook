@@ -5,6 +5,7 @@ import (
 	types "github.com/syhv-git/cookbook/file"
 )
 
+// BubbleSort performs a bubble sort on t with b defining the vertical sort order and s defining the sort value
 func BubbleSort(v, b bool, s string, t types.Tree) {
 	cmd.Log(v, "*** Starting bubble sort")
 	defer cmd.Log(v, "*** Ending bubble sort")

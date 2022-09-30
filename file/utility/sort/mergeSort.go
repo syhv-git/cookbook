@@ -5,6 +5,7 @@ import (
 	types "github.com/syhv-git/cookbook/file"
 )
 
+// MergeSort performs an in-place merge sort on the tree with b defining the vertical sort order and s defining the sort value
 func MergeSort(v, b bool, s string, t types.Tree) {
 	cmd.Log(v, "*** Starting merge sort")
 	defer cmd.Log(v, "*** Ending merge sort")

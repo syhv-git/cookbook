@@ -7,6 +7,11 @@ import (
 	"time"
 )
 
+/*
+All compare functions evaluate x > y in its own type context and returns the expression result
+
+@devs-if you decide to add on to this project, handleDesc is the only function you need for handling your custom sort value types (you will need to add the handler and include it in the switch block)
+*/
 func handleDesc[K any, T constraint](v, b bool, x, y K, data T) bool {
 	if b {
 		return compare(v, x, y, data)
@@ -32,9 +37,6 @@ func compare[K any, T constraint](v bool, x, y K, data T) bool {
 	}
 }
 
-/*
-All compare functions evaluate x > y in its own type context and return the expression results.
-*/
 func compareDir(v bool, x, y any) bool {
 	i := reflect.ValueOf(x).String()
 	j := reflect.ValueOf(y).String()

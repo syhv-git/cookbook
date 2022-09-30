@@ -5,6 +5,7 @@ import (
 	types "github.com/syhv-git/cookbook/file"
 )
 
+// InsertionSort performs an insertion sort on t with b defining the vertical sort order and s defining the sort value
 func InsertionSort(v, b bool, s string, t types.Tree) {
 	cmd.Log(v, "*** Starting insertion sort")
 	defer cmd.Log(v, "*** Ending insertion sort")

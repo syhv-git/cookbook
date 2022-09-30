@@ -5,6 +5,7 @@ import (
 	types "github.com/syhv-git/cookbook/file"
 )
 
+// SelectionSort performs an selection sort on t with b defining the vertical sort order and s defining the sort value
 func SelectionSort(v, b bool, s string, t types.Tree) {
 	cmd.Log(v, "*** Starting selection sort")
 	defer cmd.Log(v, "*** Ending selection sort")

@@ -5,7 +5,7 @@ import (
 	types "github.com/syhv-git/cookbook/file"
 )
 
-// QuickSort sorts t with quicksort based on the FileInfo type on s. b determines sortDescending ? true : false
+// QuickSort performs a quicksort on t with b defining the vertical sort order and s defining the sort value
 func QuickSort(v, b bool, s string, t types.Tree) {
 	cmd.Log(v, "*** Starting quicksort")
 	defer cmd.Log(v, "*** Ending quicksort")
