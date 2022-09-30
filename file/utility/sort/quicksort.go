@@ -2,38 +2,38 @@ package sort
 
 import (
 	"github.com/syhv-git/cookbook/cmd"
-	. "github.com/syhv-git/cookbook/file"
+	types "github.com/syhv-git/cookbook/file"
 )
 
 // QuickSort sorts t with quicksort based on the FileInfo type on s. b determines sortDescending ? true : false
-func QuickSort(v bool, t Tree, s string, b bool) {
+func QuickSort(v, b bool, s string, t types.Tree) {
 	cmd.Log(v, "*** Starting quicksort")
 	defer cmd.Log(v, "*** Ending quicksort")
 
 	switch s {
 	case "dir":
-		quickSorter(v, t, b, dir)
+		quickSorter(v, b, t, dir)
 	case "mod":
-		quickSorter(v, t, b, mod)
+		quickSorter(v, b, t, mod)
 	case "name":
-		quickSorter(v, t, b, name)
+		quickSorter(v, b, t, name)
 	case "size":
-		quickSorter(v, t, b, size)
+		quickSorter(v, b, t, size)
 	default:
 		cmd.Log(v, "* Unknown sort type: %s", s)
 	}
 }
 
-func quickSorter[T constraint](v bool, t Tree, b bool, data T) {
+func quickSorter[T constraint](v, b bool, t types.Tree, data T) {
 	if len(t) < 2 {
 		return
 	}
-	p := partition(v, t, b, data)
-	quickSorter(v, t[:p], b, data)
-	quickSorter(v, t[p+1:], b, data)
+	p := partition(v, b, t, data)
+	quickSorter(v, b, t[:p], data)
+	quickSorter(v, b, t[p+1:], data)
 }
 
-func partition[T constraint](v bool, t Tree, b bool, data T) int {
+func partition[T constraint](v, b bool, t types.Tree, data T) int {
 	end := len(t) - 1
 	pivot := data.handle(t[end])
 	i := -1

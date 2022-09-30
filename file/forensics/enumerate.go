@@ -11,13 +11,22 @@ import (
 )
 
 // Enumerate recursively walks through directories and sorts the discovered files before returning the list.
-// sort must be one of ("dir" | "mod" | "name" | "size")
+// sortBy must be one of ("dir" | "mod" | "name" | "size")
+// sortAlg must be one of ("insertion" | "quick")
 // desc defines whether the contents are sorted in descending order or ascending order
 // paths is a variadic list of paths to enumerate
-func Enumerate(v bool, sortBy string, desc bool, paths ...string) Tree {
+func Enumerate(v bool, sortBy, sortAlg string, desc bool, paths ...string) Tree {
 	res := NewTree(paths...)
 	res = dirWalker(v, res)
-	sort.QuickSort(v, res, sortBy, desc)
+
+	switch sortAlg {
+	case "insertion":
+		sort.InsertionSort(v, desc, sortBy, res)
+	case "quick":
+		sort.QuickSort(v, desc, sortBy, res)
+	case "selection":
+		sort.SelectionSort(v, desc, sortBy, res)
+	}
 	return res
 }
 

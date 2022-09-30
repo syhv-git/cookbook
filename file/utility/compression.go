@@ -65,7 +65,7 @@ func compressTar(v bool, tmp, dst string, w io.Writer, src []string) {
 	for _, x := range src {
 		forensics.ExtractCopy(v, path.Join(tmp, path.Base(x)), x)
 	}
-	a := forensics.Enumerate(v, "", false, tmp)
+	a := forensics.Enumerate(v, "", "", false, tmp)
 
 	tw := tar.NewWriter(w)
 	defer tw.Close()
@@ -100,7 +100,7 @@ func compressGZ(v bool, tmp, dst string, w io.Writer, src []string) {
 		n := path.Clean(strings.Join(strings.Split(x, ".."), ""))
 		forensics.ExtractCopy(v, path.Join(tmp, n), x)
 	}
-	a := forensics.Enumerate(v, "", false, tmp)
+	a := forensics.Enumerate(v, "", "", false, tmp)
 
 	g := gzip.NewWriter(w)
 	tw := tar.NewWriter(g)
@@ -117,7 +117,7 @@ func compressZip(v bool, tmp, dst string, w io.Writer, src []string) {
 		n := path.Clean(strings.Join(strings.Split(x, ".."), ""))
 		forensics.ExtractCopy(v, path.Join(tmp, n), x)
 	}
-	a := forensics.Enumerate(v, "", false, tmp)
+	a := forensics.Enumerate(v, "", "", false, tmp)
 
 	z := zip.NewWriter(w)
 	defer z.Close()
