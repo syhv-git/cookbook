@@ -10,7 +10,7 @@ import (
 /*
 All compare functions evaluate x > y in its own type context and returns the expression result
 
-@devs-if you decide to add on to this project, handleDesc is the only function you need for handling your custom sort value types (you will need to add the handler and include it in the switch block)
+@devs-if you decide to add on to this project, handleDesc is the only function you need to call on as long as you've implemented the custom sort type
 */
 func handleDesc[K any, T constraint](v, b bool, x, y K, data T) bool {
 	if b {
@@ -25,46 +25,43 @@ func compare[K any, T constraint](v bool, x, y K, data T) bool {
 	i := d.Interface()
 	switch i.(type) {
 	case sortDir:
-		return compareDir(v, x, y)
+		cmd.Log(v, "- Comparing dir:\n%v\n%v", x, y)
+		return compareStringDelim(v, x, y, "/")
 	case sortMod:
-		return compareMod(v, x, y)
+		cmd.Log(v, "- Comparing last modified times:\n%v\n%v", x, y)
+		return compareTime(v, x, y)
 	case sortName:
-		return compareName(v, x, y)
+		cmd.Log(v, "- Comparing names:\n%v\n%v", x, y)
+		return compareString(v, x, y)
 	case sortSize:
-		return compareSize(v, x, y)
+		cmd.Log(v, "- Comparing sizes:\n%v\n%v", x, y)
+		return compareInt(v, x, y)
 	default:
 		return false
 	}
 }
 
-func compareDir(v bool, x, y any) bool {
+func compareStringDelim(v bool, x, y any, s string) bool {
 	i := reflect.ValueOf(x).String()
 	j := reflect.ValueOf(y).String()
-	cmd.Log(v, "- Comparing dir:\n%s\n%s", i, j)
 
-	p := strings.Split(i, "/")
-	q := strings.Split(j, "/")
+	p := strings.Split(i, s)
+	q := strings.Split(j, s)
 	if len(p) > len(q) {
-		cmd.Log(v, "- %s has more parent directories", i)
-		return true
-	}
-	if len(q) > len(p) {
-		cmd.Log(v, "- %s has more parent directories", i)
-		return false
-	}
- 
-	if strings.Compare(i, j) == 1 {
 		cmd.Log(v, "- %s comes before %s", i, j)
 		return true
 	}
-	cmd.Log(v, "- %s comes before %s", j, i)
-	return false
+	if len(q) > len(p) {
+		cmd.Log(v, "- %s comes before %s", j, i)
+		return false
+	}
+
+	return compareString(v, x, y)
 }
 
-func compareMod(v bool, x, y any) bool {
+func compareTime(v bool, x, y any) bool {
 	i := reflect.ValueOf(x).String()
 	j := reflect.ValueOf(y).String()
-	cmd.Log(v, "- Comparing last modified times:\n%#v\n%#v", x, y)
 
 	a, err := time.Parse(time.RFC3339Nano, i)
 	if err != nil {
@@ -76,17 +73,16 @@ func compareMod(v bool, x, y any) bool {
 	}
 
 	if a.After(b) {
-		cmd.Log(v, "- %#v comes before %#v", a, b)
+		cmd.Log(v, "- %v comes before %v", a, b)
 		return true
 	}
-	cmd.Log(v, "- %#v comes before %#v", b, a)
+	cmd.Log(v, "- %v comes before %v", b, a)
 	return false
 }
 
-func compareName(v bool, x, y any) bool {
+func compareString(v bool, x, y any) bool {
 	i := reflect.ValueOf(x).String()
 	j := reflect.ValueOf(y).String()
-	cmd.Log(v, "- Comparing names: %s %s", i, j)
 
 	n := strings.Compare(i, j)
 	if n == 1 {
@@ -97,10 +93,9 @@ func compareName(v bool, x, y any) bool {
 	return false
 }
 
-func compareSize(v bool, x, y any) bool {
+func compareInt(v bool, x, y any) bool {
 	i := reflect.ValueOf(x).Int()
 	j := reflect.ValueOf(y).Int()
-	cmd.Log(v, "- Comparing sizes: %d %d", i, j)
 
 	if i > j {
 		cmd.Log(v, "- %d comes before %d", i, j)
