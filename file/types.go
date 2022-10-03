@@ -42,9 +42,9 @@ func (t Tree) Append(v ...Node) Tree {
 	return append(t, v...)
 }
 
-// GetPaths returns all paths in the tree.
+// GetFilePaths returns all paths in the tree.
 // offset defines the index to start the path for each string
-func (t Tree) GetPaths(offset int) (s []string) {
+func (t Tree) GetFilePaths(offset int) (s []string) {
 	for _, x := range t {
 		s = append(s, x.Path[offset:])
 	}

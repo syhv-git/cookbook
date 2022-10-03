@@ -12,14 +12,14 @@ All compare functions evaluate x > y in its own type context and returns the exp
 
 @devs-if you decide to add on to this project, handleDesc is the only function you need to call on as long as you've implemented the custom sort type
 */
-func handleDesc[K any, T constraint](v, b bool, x, y K, data T) bool {
+func handleDesc[T constraint](v, b bool, x, y any, data T) bool {
 	if b {
 		return compare(v, x, y, data)
 	}
 	return compare(v, y, x, data)
 }
 
-func compare[K any, T constraint](v bool, x, y K, data T) bool {
+func compare[T constraint](v bool, x, y any, data T) bool {
 	t := reflect.ValueOf(data)
 	d := reflect.Indirect(t)
 	i := d.Interface()

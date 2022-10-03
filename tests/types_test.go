@@ -33,9 +33,9 @@ func TestAppend(t *testing.T) {
 	}
 }
 
-func TestGetPaths(t *testing.T) {
+func TestGetFilePaths(t *testing.T) {
 	tree := types.NewTree(".")
-	s := tree.GetPaths(0)
+	s := tree.GetFilePaths(0)
 	if len(s) < 1 {
 		t.Error("## Error when getting paths")
 	}
