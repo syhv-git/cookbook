@@ -85,7 +85,6 @@ func DetectArchiveFromImage(v bool, src string) bool {
 
 		for _, s := range signatures {
 			if b == s[0] {
-				c := make([]byte, len(s)-1)
 				c, err := r.Peek(len(s) - 1)
 				if err != nil {
 					cmd.Fatal("## " + err.Error())
